@@ -1,0 +1,22 @@
+spring:
+  main:
+    web-application-type: servlet
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: nicusor
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false
+
+security:
+  secret-key: "KZ87wAMYYyVByiy6JoXkrKrldECv2Sbi"
+
+admin:
+  email: "admin@example.com"
+  password: "password"
