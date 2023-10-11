@@ -19,7 +19,7 @@
 		<testcontainers.version>1.18.3</testcontainers.version>
 		<docker.username>nicus0r</docker.username>
 		<docker.image.name>school-management-sys-api</docker.image.name>
-		<docker.image.tag>placeholder</docker.image.tag>
+		<docker.image.tag/>
 	</properties>
 	<dependencies>
 		<dependency>
