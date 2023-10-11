@@ -29,7 +29,7 @@ public abstract class AbstractCourseRelatedIntegrationTest extends AbstractInteg
     }
 
     public CreateCourseRequest getCreateCourseRequest(Long teacherId) {
-        return new CreateCourseRequest(FAKER.lorem().word() + " " + FAKER.lorem().word(), teacherId);
+        return new CreateCourseRequest(FAKER.lorem().sentence(), teacherId);
     }
 
     public CourseDTO getCourseByName(String jwtToken, String name) {
