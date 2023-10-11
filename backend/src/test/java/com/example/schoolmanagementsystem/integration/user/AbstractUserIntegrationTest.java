@@ -2,11 +2,9 @@ package com.example.schoolmanagementsystem.integration.user;
 
 import com.example.schoolmanagementsystem.integration.AbstractIntegrationTest;
 import com.example.schoolmanagementsystem.user.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -42,7 +40,7 @@ public abstract class AbstractUserIntegrationTest extends AbstractIntegrationTes
         );
     }
 
-    UserDTO getUserByIdResponseBodyAndExpectStatusOk(String jwtToken, Long userId) {
+    UserDTO getUserByIdAndExpectStatusOk(String jwtToken, Long userId) {
         return client.get()
                 .uri(USERS_URI + "/{id}", userId)
                 .accept(MediaType.APPLICATION_JSON)

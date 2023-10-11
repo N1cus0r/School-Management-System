@@ -50,7 +50,7 @@ public class HomeworkDeleteIntegrationTest extends AbstractHomeworkIntegrationTe
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         CreateCourseRequest createCourseRequest = getCreateCourseRequest(teacherId);
 
@@ -82,7 +82,7 @@ public class HomeworkDeleteIntegrationTest extends AbstractHomeworkIntegrationTe
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         CreateCourseRequest createCourseRequest = getCreateCourseRequest(teacherId);
 
@@ -122,7 +122,7 @@ public class HomeworkDeleteIntegrationTest extends AbstractHomeworkIntegrationTe
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         CreateCourseRequest createCourseRequest = getCreateCourseRequest(teacherId);
 

@@ -77,60 +77,23 @@ public class UserRetrieveIntegrationTest extends AbstractUserIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        List<UserDTO> students = getAllUsersByRoleAndExpectOkStatus(jwtToken, Role.STUDENT);
+        UserDTO admin = getUserByEmailAndExpectOkStatus(jwtToken, getAdminUser().getEmail());
 
-        Long studentId = getUserIdByEmailFromResultList(
-                studentRegistrationRequest.email(),
-                students
-        );
+        UserDTO teacher = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email());
 
-        LocalDate studentRegistrationDate =
-                getUserRegistrationDateByEmailFromResultList(
-                        studentRegistrationRequest.email(),
-                        students
-                );
+        UserDTO student = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
 
-        UserDTO expectedStudent = getExpectedUserFromRegistrationRequest(
-                studentId,
-                studentRegistrationDate,
-                studentRegistrationRequest
-        );
+        UserDTO expectedAdmin = getUserByIdAndExpectStatusOk(jwtToken, admin.id());
 
-        List<UserDTO> teachers = getAllUsersByRoleAndExpectOkStatus(jwtToken, Role.TEACHER);
+        UserDTO expectedTeacher = getUserByIdAndExpectStatusOk(jwtToken, teacher.id());
 
-        Long teacherId = getUserIdByEmailFromResultList(
-                teacherRegistrationRequest.email(),
-                teachers
-        );
+        UserDTO expectedStudent = getUserByIdAndExpectStatusOk(jwtToken, student.id());
 
-        LocalDate teacherRegistrationDate =
-                getUserRegistrationDateByEmailFromResultList(
-                        teacherRegistrationRequest.email(),
-                        teachers
-                );
+        assertThat(expectedAdmin).isEqualTo(admin);
 
-        UserDTO expectedTeacher =
-                getExpectedUserFromRegistrationRequest(
-                        teacherId,
-                        teacherRegistrationDate,
-                        teacherRegistrationRequest
-                );
+        assertThat(expectedTeacher).isEqualTo(teacher);
 
-        UserDTO expectedAmin = userDTOMapper.apply(getAdminUser());
-
-        Long adminId = expectedAmin.id();
-
-        UserDTO resultStudent = getUserByIdResponseBodyAndExpectStatusOk(jwtToken, studentId);
-
-        UserDTO resultTeacher = getUserByIdResponseBodyAndExpectStatusOk(jwtToken, teacherId);
-
-        UserDTO resultAdmin = getUserByIdResponseBodyAndExpectStatusOk(jwtToken, adminId);
-
-        assertThat(resultStudent).isEqualTo(expectedStudent);
-
-        assertThat(resultTeacher).isEqualTo(expectedTeacher);
-
-        assertThat(resultAdmin).isEqualTo(expectedAmin);
+        assertThat(expectedStudent).isEqualTo(student);
 
     }
 
@@ -162,59 +125,21 @@ public class UserRetrieveIntegrationTest extends AbstractUserIntegrationTest {
 
         String teacherJwtToken = getUserJwtToken(authenticationRequest);
 
-        List<UserDTO> students = getAllUsersByRoleAndExpectOkStatus(jwtToken, Role.STUDENT);
+        UserDTO student = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
 
-        Long studentId = getUserIdByEmailFromResultList(
-                studentRegistrationRequest.email(),
-                students
-        );
+        UserDTO teacher = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email());
 
-        LocalDate studentRegistrationDate =
-                getUserRegistrationDateByEmailFromResultList(
-                        studentRegistrationRequest.email(),
-                        students
-                );
+        UserDTO invalidTeacher = getUserByEmailAndExpectOkStatus(jwtToken, invalidTeacherRegistrationRequest.email());
 
-        UserDTO expectedStudent = getExpectedUserFromRegistrationRequest(
-                studentId,
-                studentRegistrationDate,
-                studentRegistrationRequest
-        );
+        getUserByIdAndExpectStatusForbidden(teacherJwtToken, invalidTeacher.id());
 
-        List<UserDTO> teachers = getAllUsersByRoleAndExpectOkStatus(jwtToken, Role.TEACHER);
+        UserDTO expectedStudent = getUserByIdAndExpectStatusOk(teacherJwtToken, student.id());
 
-        Long teacherId = getUserIdByEmailFromResultList(
-                teacherRegistrationRequest.email(),
-                teachers
-        );
+        UserDTO expectedTeacher = getUserByIdAndExpectStatusOk(teacherJwtToken, teacher.id());
 
-        LocalDate teacherRegistrationDate =
-                getUserRegistrationDateByEmailFromResultList(
-                        teacherRegistrationRequest.email(),
-                        teachers
-                );
+        assertThat(expectedStudent).isEqualTo(student);
 
-        UserDTO expectedTeacher =
-                getExpectedUserFromRegistrationRequest(
-                        teacherId,
-                        teacherRegistrationDate,
-                        teacherRegistrationRequest
-                );
-
-        Long invalidTeacherId = getUserIdByEmailFromResultList(
-                invalidTeacherRegistrationRequest.email(),
-                teachers
-        );
-
-        UserDTO resultStudent = getUserByIdResponseBodyAndExpectStatusOk(teacherJwtToken, studentId);
-
-        UserDTO resultTeacher = getUserByIdResponseBodyAndExpectStatusOk(teacherJwtToken, teacherId);
-
-        getUserByIdAndExpectStatusForbidden(teacherJwtToken, invalidTeacherId);
-
-        assertThat(resultStudent).isEqualTo(expectedStudent);
-
-        assertThat(resultTeacher).isEqualTo(expectedTeacher);
+        assertThat(expectedTeacher).isEqualTo(teacher);
     }
 
     @Test
@@ -244,44 +169,19 @@ public class UserRetrieveIntegrationTest extends AbstractUserIntegrationTest {
 
         String studentJwtToken = getUserJwtToken(authenticationRequest);
 
-        List<UserDTO> students = getAllUsersByRoleAndExpectOkStatus(jwtToken, Role.STUDENT);
+        UserDTO student = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
 
-        Long studentId = getUserIdByEmailFromResultList(
-                studentRegistrationRequest.email(),
-                students
-        );
+        UserDTO invalidStudent = getUserByEmailAndExpectOkStatus(jwtToken, invalidStudentRegistrationRequest.email());
 
-        LocalDate studentRegistrationDate =
-                getUserRegistrationDateByEmailFromResultList(
-                        studentRegistrationRequest.email(),
-                        students
-                );
+        UserDTO teacher = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email());
 
-        UserDTO expectedStudent = getExpectedUserFromRegistrationRequest(
-                studentId,
-                studentRegistrationDate,
-                studentRegistrationRequest
-        );
+        getUserByIdAndExpectStatusForbidden(studentJwtToken, teacher.id());
 
-        List<UserDTO> teachers = getAllUsersByRoleAndExpectOkStatus(jwtToken, Role.TEACHER);
+        getUserByIdAndExpectStatusForbidden(studentJwtToken, invalidStudent.id());
 
-        Long teacherId = getUserIdByEmailFromResultList(
-                teacherRegistrationRequest.email(),
-                teachers
-        );
+        UserDTO expectedStudent = getUserByIdAndExpectStatusOk(studentJwtToken, student.id());
 
-        Long invalidStudentId = getUserIdByEmailFromResultList(
-                invalidStudentRegistrationRequest.email(),
-                students
-        );
-
-        UserDTO resultStudent = getUserByIdResponseBodyAndExpectStatusOk(studentJwtToken, studentId);
-
-        getUserByIdAndExpectStatusForbidden(studentJwtToken, teacherId);
-
-        getUserByIdAndExpectStatusForbidden(studentJwtToken, invalidStudentId);
-
-        assertThat(resultStudent).isEqualTo(expectedStudent);
+        assertThat(expectedStudent).isEqualTo(student);
     }
 
     @Test

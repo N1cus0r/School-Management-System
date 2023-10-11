@@ -8,7 +8,6 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -88,9 +87,9 @@ public class UserUpdateIntegrationTest extends AbstractUserIntegrationTest {
 
         Long adminId = getAdminUser().getId();
 
-        Long studentId = getUserByEmail(jwtToken, studentRegistrationRequest.email()).id();
+        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         updateUserAndExpectOkStatus(jwtToken, adminId, adminUpdateRequest);
 
@@ -98,11 +97,11 @@ public class UserUpdateIntegrationTest extends AbstractUserIntegrationTest {
 
         updateUserAndExpectOkStatus(jwtToken, studentId, studentUpdateRequest);
 
-        UserDTO updatedAdmin = getUserByIdResponseBodyAndExpectStatusOk(jwtToken, adminId);
+        UserDTO updatedAdmin = getUserByIdAndExpectStatusOk(jwtToken, adminId);
 
-        UserDTO updatedTeacher = getUserByIdResponseBodyAndExpectStatusOk(jwtToken, teacherId);
+        UserDTO updatedTeacher = getUserByIdAndExpectStatusOk(jwtToken, teacherId);
 
-        UserDTO updatedStudent = getUserByIdResponseBodyAndExpectStatusOk(jwtToken, studentId);
+        UserDTO updatedStudent = getUserByIdAndExpectStatusOk(jwtToken, studentId);
 
         assertThat(isUserUpdatedSuccessfully(updatedAdmin, adminUpdateRequest)).isTrue();
 
@@ -141,9 +140,9 @@ public class UserUpdateIntegrationTest extends AbstractUserIntegrationTest {
 
         Long adminId = getAdminUser().getId();
 
-        Long studentId = getUserByEmail(jwtToken, studentRegistrationRequest.email()).id();
+        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         updateUserAndExpectForbiddenStatus(teacherJwtToken, adminId, adminUpdateRequest);
 
@@ -151,7 +150,7 @@ public class UserUpdateIntegrationTest extends AbstractUserIntegrationTest {
 
         updateUserAndExpectOkStatus(teacherJwtToken, studentId, studentUpdateRequest);
 
-        UserDTO updatedStudent = getUserByIdResponseBodyAndExpectStatusOk(jwtToken, studentId);
+        UserDTO updatedStudent = getUserByIdAndExpectStatusOk(jwtToken, studentId);
 
         assertThat(isUserUpdatedSuccessfully(updatedStudent, studentUpdateRequest)).isTrue();
     }
@@ -186,9 +185,9 @@ public class UserUpdateIntegrationTest extends AbstractUserIntegrationTest {
 
         Long adminId = getAdminUser().getId();
 
-        Long studentId = getUserByEmail(jwtToken, studentRegistrationRequest.email()).id();
+        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         updateUserAndExpectForbiddenStatus(studentJwtToken, adminId, adminUpdateRequest);
 

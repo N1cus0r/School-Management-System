@@ -5,9 +5,6 @@ import com.example.schoolmanagementsystem.auth.AuthenticationRequest;
 import com.example.schoolmanagementsystem.auth.AuthenticationResponse;
 import com.example.schoolmanagementsystem.user.*;
 import com.github.javafaker.Faker;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +14,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
@@ -161,7 +157,7 @@ public abstract class AbstractIntegrationTest {
                 .orElseThrow();
     }
 
-    public UserDTO getUserByEmail(String jwtToken, String email) {
+    public UserDTO getUserByEmailAndExpectOkStatus(String jwtToken, String email) {
         return client.get()
                 .uri(USERS_URI + "/byEmail/" + email)
                 .accept(MediaType.APPLICATION_JSON)

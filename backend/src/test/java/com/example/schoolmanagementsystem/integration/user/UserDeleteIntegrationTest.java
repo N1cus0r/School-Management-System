@@ -1,15 +1,11 @@
 package com.example.schoolmanagementsystem.integration.user;
 
 import com.example.schoolmanagementsystem.auth.AuthenticationRequest;
-import com.example.schoolmanagementsystem.user.Role;
-import com.example.schoolmanagementsystem.user.UserDTO;
 import com.example.schoolmanagementsystem.user.UserRegistrationRequest;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 
 import java.io.IOException;
-import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -48,9 +44,9 @@ public class UserDeleteIntegrationTest extends AbstractUserIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        Long studentId = getUserByEmail(jwtToken, studentRegistrationRequest.email()).id();
+        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         deleteUserAndExpectOkStatus(jwtToken, studentId);
 
@@ -76,9 +72,9 @@ public class UserDeleteIntegrationTest extends AbstractUserIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, invalidTeacherRegistrationRequest);
 
-        Long studentId = getUserByEmail(jwtToken, studentRegistrationRequest.email()).id();
+        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
 
-        Long invalidTeacherId = getUserByEmail(jwtToken, invalidTeacherRegistrationRequest.email()).id();
+        Long invalidTeacherId = getUserByEmailAndExpectOkStatus(jwtToken, invalidTeacherRegistrationRequest.email()).id();
 
         AuthenticationRequest authenticationRequest =
                 new AuthenticationRequest(
@@ -112,9 +108,9 @@ public class UserDeleteIntegrationTest extends AbstractUserIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, invalidStudentRegistrationRequest);
 
-        Long invalidStudentId = getUserByEmail(jwtToken, invalidStudentRegistrationRequest.email()).id();
+        Long invalidStudentId = getUserByEmailAndExpectOkStatus(jwtToken, invalidStudentRegistrationRequest.email()).id();
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         AuthenticationRequest authenticationRequest =
                 new AuthenticationRequest(

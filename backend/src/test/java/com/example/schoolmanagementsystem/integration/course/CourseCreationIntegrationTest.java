@@ -38,7 +38,7 @@ public class CourseCreationIntegrationTest extends AbstractCourseIntegrationTest
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         CreateCourseRequest courseRequest = getCreateCourseRequest(teacherId);
 
@@ -68,7 +68,7 @@ public class CourseCreationIntegrationTest extends AbstractCourseIntegrationTest
 
         registerUserAndExpectOkStatus(jwtToken, anotherTeacherRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         AuthenticationRequest authenticationRequest =
                 new AuthenticationRequest(

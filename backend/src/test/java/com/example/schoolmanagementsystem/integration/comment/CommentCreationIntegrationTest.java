@@ -47,7 +47,7 @@ public class CommentCreationIntegrationTest extends AbstractCommentIntegrationTe
 
         registerUserAndExpectOkStatus(jwtToken, studentRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         CreateCourseRequest createCourseRequest = getCreateCourseRequest(teacherId);
 
@@ -55,7 +55,7 @@ public class CommentCreationIntegrationTest extends AbstractCommentIntegrationTe
 
         CourseDTO courseDTO = getCourseByName(jwtToken, createCourseRequest.name());
 
-        Long studentId = getUserByEmail(jwtToken, studentRegistrationRequest.email()).id();
+        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
 
         addStudentToCourseAndExpectOkStatus(jwtToken, courseDTO.id(), studentId);
 
@@ -102,7 +102,7 @@ public class CommentCreationIntegrationTest extends AbstractCommentIntegrationTe
 
         registerUserAndExpectOkStatus(jwtToken, studentRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         CreateCourseRequest createCourseRequest = getCreateCourseRequest(teacherId);
 
@@ -110,7 +110,7 @@ public class CommentCreationIntegrationTest extends AbstractCommentIntegrationTe
 
         CourseDTO courseDTO = getCourseByName(jwtToken, createCourseRequest.name());
 
-        Long studentId = getUserByEmail(jwtToken, studentRegistrationRequest.email()).id();
+        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
 
         addStudentToCourseAndExpectOkStatus(jwtToken, courseDTO.id(), studentId);
 
@@ -165,7 +165,7 @@ public class CommentCreationIntegrationTest extends AbstractCommentIntegrationTe
 
         registerUserAndExpectOkStatus(jwtToken, studentRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         CreateCourseRequest createCourseRequest = getCreateCourseRequest(teacherId);
 
@@ -173,7 +173,7 @@ public class CommentCreationIntegrationTest extends AbstractCommentIntegrationTe
 
         Long courseId = getCourseByName(jwtToken, createCourseRequest.name()).id();
 
-        Long studentId = getUserByEmail(jwtToken, studentRegistrationRequest.email()).id();
+        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
 
         addStudentToCourseAndExpectOkStatus(jwtToken, courseId, studentId);
 

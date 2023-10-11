@@ -26,7 +26,7 @@ public class HomeworkRetrieveIntegrationTest extends AbstractHomeworkIntegration
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         CreateCourseRequest createCourseRequest = getCreateCourseRequest(teacherId);
 
@@ -62,9 +62,9 @@ public class HomeworkRetrieveIntegrationTest extends AbstractHomeworkIntegration
 
         registerUserAndExpectOkStatus(jwtToken, anotherTeacherRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
-        Long anotherTeacherId = getUserByEmail(jwtToken, anotherTeacherRegistrationRequest.email()).id();
+        Long anotherTeacherId = getUserByEmailAndExpectOkStatus(jwtToken, anotherTeacherRegistrationRequest.email()).id();
 
         CreateCourseRequest createTeacherCourseRequest = getCreateCourseRequest(teacherId);
 
@@ -113,7 +113,7 @@ public class HomeworkRetrieveIntegrationTest extends AbstractHomeworkIntegration
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         CreateCourseRequest createCourseForStudentRequest = getCreateCourseRequest(teacherId);
 
@@ -137,9 +137,9 @@ public class HomeworkRetrieveIntegrationTest extends AbstractHomeworkIntegration
 
         registerUserAndExpectOkStatus(jwtToken, anotherStudentRegistrationRequest);
 
-        Long studentId = getUserByEmail(jwtToken, studentRegistrationRequest.email()).id();
+        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
 
-        Long anotherStudentId = getUserByEmail(jwtToken, anotherStudentRegistrationRequest.email()).id();
+        Long anotherStudentId = getUserByEmailAndExpectOkStatus(jwtToken, anotherStudentRegistrationRequest.email()).id();
 
         addStudentToCourseAndExpectOkStatus(jwtToken, courseForStudentId, studentId);
 

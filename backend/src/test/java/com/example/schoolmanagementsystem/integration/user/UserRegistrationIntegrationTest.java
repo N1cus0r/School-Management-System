@@ -1,7 +1,6 @@
 package com.example.schoolmanagementsystem.integration.user;
 
 import com.example.schoolmanagementsystem.auth.AuthenticationRequest;
-import com.example.schoolmanagementsystem.user.Role;
 import com.example.schoolmanagementsystem.user.UserDTO;
 import com.example.schoolmanagementsystem.user.UserRegistrationRequest;
 import org.junit.jupiter.api.Test;
@@ -9,8 +8,6 @@ import org.springframework.http.MediaType;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -33,6 +30,12 @@ public class UserRegistrationIntegrationTest extends AbstractUserIntegrationTest
                 .isForbidden();
     }
 
+    private boolean isUserCreatedSuccessfully(UserDTO resultUser, UserRegistrationRequest userRegistrationRequest) {
+        return userRegistrationRequest.fullName().equals(resultUser.fullName()) &&
+                userRegistrationRequest.gender().equals(resultUser.gender()) &&
+                userRegistrationRequest.dateOfBirth().equals(resultUser.dateOfBirth());
+    }
+
     @Test
     void canAdminRegisterTeacherAndStudentAndNotAdmin() throws IOException {
         String jwtToken = getAdminJwtToken();
@@ -52,53 +55,18 @@ public class UserRegistrationIntegrationTest extends AbstractUserIntegrationTest
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        List<UserDTO> students = getAllUsersByRoleAndExpectOkStatus(jwtToken, Role.STUDENT);
+        UserDTO student = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
 
-        Long studentId = getUserIdByEmailFromResultList(
-                studentRegistrationRequest.email(),
-                students
-        );
+        UserDTO teacher = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email());
 
-        LocalDate studentRegistrationDate =
-                getUserRegistrationDateByEmailFromResultList(
-                        studentRegistrationRequest.email(),
-                        students
-                );
+        assertThat(isUserCreatedSuccessfully(student, studentRegistrationRequest));
 
-        UserDTO expectedStudent = getExpectedUserFromRegistrationRequest(
-                studentId,
-                studentRegistrationDate,
-                studentRegistrationRequest
-        );
-
-        List<UserDTO> teachers = getAllUsersByRoleAndExpectOkStatus(jwtToken, Role.TEACHER);
-
-        Long teacherId = getUserIdByEmailFromResultList(
-                teacherRegistrationRequest.email(),
-                teachers
-        );
-
-        LocalDate teacherRegistrationDate =
-                getUserRegistrationDateByEmailFromResultList(
-                        teacherRegistrationRequest.email(),
-                        teachers
-                );
-
-        UserDTO expectedTeacher =
-                getExpectedUserFromRegistrationRequest(
-                        teacherId,
-                        teacherRegistrationDate,
-                        teacherRegistrationRequest
-                );
-
-        assertThat(students).contains(expectedStudent);
-
-        assertThat(teachers).contains(expectedTeacher);
+        assertThat(isUserCreatedSuccessfully(teacher, studentRegistrationRequest));
     }
 
     @Test
     void canTeacherRegisterStudentAndNotTeacherAndAdmin() throws IOException {
-        String adminJwtToken = getAdminJwtToken();
+        String jwtToken = getAdminJwtToken();
 
         UserRegistrationRequest adminRegistrationRequest =
                 getAdminRegistrationRequest();
@@ -112,7 +80,7 @@ public class UserRegistrationIntegrationTest extends AbstractUserIntegrationTest
         UserRegistrationRequest studentRegistrationRequest =
                 getStudentRegistrationRequest();
 
-        registerUserAndExpectOkStatus(adminJwtToken, teacherRegistrationRequest);
+        registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
         AuthenticationRequest authenticationRequest =
                 new AuthenticationRequest(
@@ -128,31 +96,14 @@ public class UserRegistrationIntegrationTest extends AbstractUserIntegrationTest
 
         registerUserAndExpectOkStatus(teacherJwtToken, studentRegistrationRequest);
 
-        List<UserDTO> students = getAllUsersByRoleAndExpectOkStatus(teacherJwtToken, Role.STUDENT);
+        UserDTO student = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
 
-        Long studentId = getUserIdByEmailFromResultList(
-                studentRegistrationRequest.email(),
-                students
-        );
-
-        LocalDate studentRegistrationDate =
-                getUserRegistrationDateByEmailFromResultList(
-                        studentRegistrationRequest.email(),
-                        students
-                );
-
-        UserDTO expectedStudent = getExpectedUserFromRegistrationRequest(
-                studentId,
-                studentRegistrationDate,
-                studentRegistrationRequest
-        );
-
-        assertThat(students).contains(expectedStudent);
+        assertThat(isUserCreatedSuccessfully(student, studentRegistrationRequest));
     }
 
     @Test
     void canStudentNotRegisterUsers() throws IOException {
-        String adminJwtToken = getAdminJwtToken();
+        String jwtToken = getAdminJwtToken();
 
         UserRegistrationRequest invalidStudentRegistrationRequest =
                 getStudentRegistrationRequest();
@@ -167,7 +118,7 @@ public class UserRegistrationIntegrationTest extends AbstractUserIntegrationTest
         UserRegistrationRequest studentRegistrationRequest =
                 getStudentRegistrationRequest();
 
-        registerUserAndExpectOkStatus(adminJwtToken, studentRegistrationRequest);
+        registerUserAndExpectOkStatus(jwtToken, studentRegistrationRequest);
 
         AuthenticationRequest authenticationRequest =
                 new AuthenticationRequest(

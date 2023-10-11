@@ -30,9 +30,9 @@ public class GradeRetrieveIntegrationTest extends AbstractGradeIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, studentRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
-        Long studentId = getUserByEmail(jwtToken, studentRegistrationRequest.email()).id();
+        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
 
         CreateCourseRequest createCourseRequest = getCreateCourseRequest(teacherId);
 
@@ -68,9 +68,9 @@ public class GradeRetrieveIntegrationTest extends AbstractGradeIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, studentRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
-        Long studentId = getUserByEmail(jwtToken, studentRegistrationRequest.email()).id();
+        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
 
         CreateCourseRequest createCourseRequest = getCreateCourseRequest(teacherId);
 
@@ -111,7 +111,7 @@ public class GradeRetrieveIntegrationTest extends AbstractGradeIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         CreateCourseRequest createCourseForStudentRequest = getCreateCourseRequest(teacherId);
 
@@ -135,9 +135,9 @@ public class GradeRetrieveIntegrationTest extends AbstractGradeIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, anotherStudentRegistrationRequest);
 
-        Long studentId = getUserByEmail(jwtToken, studentRegistrationRequest.email()).id();
+        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
 
-        Long anotherStudentId = getUserByEmail(jwtToken, anotherStudentRegistrationRequest.email()).id();
+        Long anotherStudentId = getUserByEmailAndExpectOkStatus(jwtToken, anotherStudentRegistrationRequest.email()).id();
 
         addStudentToCourseAndExpectOkStatus(jwtToken, courseForStudentId, studentId);
 

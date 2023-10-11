@@ -55,7 +55,7 @@ public class CourseDeleteIntegrationTest extends AbstractCourseIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         CreateCourseRequest createCourseRequest = getCreateCourseRequest(teacherId);
 
@@ -80,9 +80,9 @@ public class CourseDeleteIntegrationTest extends AbstractCourseIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, anotherTeacherRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
-        Long anotherTeacherId = getUserByEmail(jwtToken, anotherTeacherRegistrationRequest.email()).id();
+        Long anotherTeacherId = getUserByEmailAndExpectOkStatus(jwtToken, anotherTeacherRegistrationRequest.email()).id();
 
         CreateCourseRequest createTeacherCreateCourseRequest = getCreateCourseRequest(teacherId);
 
@@ -120,7 +120,7 @@ public class CourseDeleteIntegrationTest extends AbstractCourseIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        Long teacherId = getUserByEmail(jwtToken, teacherRegistrationRequest.email()).id();
+        Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
         CreateCourseRequest createCourseRequest = getCreateCourseRequest(teacherId);
 
