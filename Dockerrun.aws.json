@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "school-management-sys-api",
-      "image": "nicus0r/school-management-sys-api:latest",
+      "image": "nicus0r/school-management-sys-api:11.10.2023.14.14.28",
       "essential": true,
       "memory": 512,
       "portMappings": [
