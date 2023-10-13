@@ -5,6 +5,8 @@ import com.example.schoolmanagementsystem.exception.NotEnoughAuthorityException;
 import com.example.schoolmanagementsystem.exception.ResourceNotFoundException;
 import com.example.schoolmanagementsystem.exception.RequestValidationError;
 import com.example.schoolmanagementsystem.exception.UserEmailTakeException;
+import com.example.schoolmanagementsystem.s3.S3Bucket;
+import com.example.schoolmanagementsystem.s3.S3Service;
 import com.example.schoolmanagementsystem.util.UpdateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,8 +15,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +30,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationUtil authenticationUtil;
     private final UpdateUtil updateUtil;
+    private final S3Service s3Service;
+    private final S3Bucket s3Bucket;
 
     @Value("${admin.email}")
     private String adminEmail;
@@ -77,11 +84,12 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "User with id [%s] does not exist".formatted(userId)));
     }
+
     public UserDTO getUserById(Long userId) {
         User user = getUserByIdAndThrowIfNotFound(userId);
 
         if (!authenticationUtil.isUserPermittedToInteractWith(user.getRole()) &&
-            !authenticationUtil.isUserInteractingWithItself(user)) {
+                !authenticationUtil.isUserInteractingWithItself(user)) {
             throw new NotEnoughAuthorityException("You don't have the right to retrieve users with this role");
         }
 
@@ -196,8 +204,59 @@ public class UserService {
             throw new NotEnoughAuthorityException("You don't have the right to interact with users with this role");
         }
 
+        if (user.getProfileImageId() != null) {
+            s3Service.deleteObject(
+                    s3Bucket.getName(),
+                    s3Bucket.PROFILE_IMAGE_PATH.formatted(userId, user.getProfileImageId())
+            );
+        }
+
         userRepository.delete(user);
     }
 
+    public void uploadUserProfileImage(Long userId, MultipartFile file) {
+        User user = getUserByIdAndThrowIfNotFound(userId);
 
+        if (!authenticationUtil.isUserPermittedToInteractWith(user.getRole())) {
+            throw new NotEnoughAuthorityException("You don't have the right to interact with this user");
+        }
+
+        String profileImageId =
+                user.getProfileImageId() == null ?
+                        UUID.randomUUID().toString() :
+                        user.getProfileImageId();
+
+        try {
+            s3Service.putObject(
+                    s3Bucket.getName(),
+                    s3Bucket.PROFILE_IMAGE_PATH.formatted(userId, profileImageId),
+                    file.getBytes()
+            );
+
+            user.setProfileImageId(profileImageId);
+            userRepository.save(user);
+        } catch (IOException e) {
+            throw new RequestValidationError("Failed to upload image");
+        }
+    }
+
+    public byte[] getUserImage(Long userId) {
+        User user = getUserByIdAndThrowIfNotFound(userId);
+
+        if (!authenticationUtil.isUserPermittedToInteractWith(user.getRole()) &&
+                !authenticationUtil.isUserInteractingWithItself(user)) {
+            throw new NotEnoughAuthorityException("You don't have the right interact with this user");
+        }
+
+        if (user.getProfileImageId() == null) {
+            throw new ResourceNotFoundException(
+                    "Customer with id [%s] profile image not found".formatted(userId)
+            );
+        }
+
+        return s3Service.getObject(
+                s3Bucket.getName(),
+                s3Bucket.PROFILE_IMAGE_PATH.formatted(userId, user.getProfileImageId())
+        );
+    }
 }

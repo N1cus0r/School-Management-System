@@ -20,3 +20,10 @@ security:
 admin:
   email: "admin@example.com"
   password: "password"
+
+aws:
+  region: "eu-central-1"
+  s3:
+    mock: true
+    bucket:
+      name: "school-management-system"

@@ -2,7 +2,9 @@ package com.example.schoolmanagementsystem.user;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -61,6 +63,24 @@ public class UserController {
     @DeleteMapping("{id}")
     public void deleteUser(@PathVariable("id") Long userId) {
         userService.deleteUserById(userId);
+    }
+
+    @PutMapping(
+            value = "{id}/profile-image",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public void uploadUserProfileImage(
+            @PathVariable("id") Long userId,
+            @RequestParam("file") MultipartFile file
+    ) {
+        userService.uploadUserProfileImage(userId, file);
+    }
+
+    @GetMapping("{id}/profile-image")
+    public byte[] uploadUserProfileImage(
+            @PathVariable("id") Long userId
+    ) {
+        return userService.getUserImage(userId);
     }
 }
 
