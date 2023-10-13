@@ -3,11 +3,12 @@ package com.example.schoolmanagementsystem.user;
 import com.example.schoolmanagementsystem.AbstractServiceTest;
 import com.example.schoolmanagementsystem.auth.AuthenticationUtil;
 import com.example.schoolmanagementsystem.exception.NotEnoughAuthorityException;
-import com.example.schoolmanagementsystem.exception.ResourceNotFoundException;
 import com.example.schoolmanagementsystem.exception.RequestValidationError;
+import com.example.schoolmanagementsystem.exception.ResourceNotFoundException;
 import com.example.schoolmanagementsystem.exception.UserEmailTakeException;
+import com.example.schoolmanagementsystem.s3.S3Bucket;
+import com.example.schoolmanagementsystem.s3.S3Service;
 import com.example.schoolmanagementsystem.util.UpdateUtil;
-import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,10 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,9 +29,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -44,6 +49,10 @@ class UserServiceTest extends AbstractServiceTest {
     private AuthenticationUtil authenticationUtil;
     @MockBean
     private UpdateUtil updateUtil;
+    @MockBean
+    private S3Service s3Service;
+    @MockBean
+    private S3Bucket s3Bucket;
     @Autowired
     private UserService userService;
     @Autowired
@@ -275,7 +284,6 @@ class UserServiceTest extends AbstractServiceTest {
                 .isInstanceOf(NotEnoughAuthorityException.class)
                 .hasMessage("You don't have the right to access this resource");
     }
-
 
 
     @Test
@@ -575,5 +583,172 @@ class UserServiceTest extends AbstractServiceTest {
         assertThatThrownBy(() -> userService.deleteUserById(user.getId()))
                 .isInstanceOf(NotEnoughAuthorityException.class)
                 .hasMessage("You don't have the right to interact with users with this role");
+    }
+
+
+    @Test
+    void uploadUserProfileImage() {
+        Long userId = FAKER.number().randomNumber();
+
+        User admin = createUserByRole(Role.ADMIN);
+
+        when(userRepository.findById(userId))
+                .thenReturn(Optional.ofNullable(admin));
+
+        when(authenticationUtil.isUserPermittedToInteractWith(admin.getRole()))
+                .thenReturn(true);
+
+        String bucketName = FAKER.lorem().word();
+
+        when(s3Bucket.getName())
+                .thenReturn(bucketName);
+
+        byte[] bytes = FAKER.lorem().word().getBytes();
+
+        MultipartFile multipartFile =
+                new MockMultipartFile("file", bytes);
+
+        userService.uploadUserProfileImage(userId, multipartFile);
+
+        ArgumentCaptor<String> profileImagePathArgumentCaptor =
+                ArgumentCaptor.forClass(String.class);
+
+        verify(s3Service)
+                .putObject(
+                        eq(bucketName),
+                        profileImagePathArgumentCaptor.capture(),
+                        eq(bytes)
+                );
+
+        ArgumentCaptor<User> userArgumentCaptor =
+                ArgumentCaptor.forClass(User.class);
+
+        verify(userRepository).save(userArgumentCaptor.capture());
+
+        assertThat(profileImagePathArgumentCaptor.getValue())
+                .contains(userArgumentCaptor.getValue().getProfileImageId())
+                .contains(userId.toString());
+    }
+
+    @Test
+    void uploadUserProfileImageWithInsufficientAuthority() {
+        Long userId = FAKER.number().randomNumber();
+
+        User student = createUserByRole(Role.STUDENT);
+
+        when(userRepository.findById(userId))
+                .thenReturn(Optional.ofNullable(student));
+
+        when(authenticationUtil.isUserPermittedToInteractWith(student.getRole()))
+                .thenReturn(false);
+
+        String bucketName = FAKER.lorem().word();
+
+        when(s3Bucket.getName())
+                .thenReturn(bucketName);
+
+        byte[] bytes = FAKER.lorem().word().getBytes();
+
+        MultipartFile multipartFile =
+                new MockMultipartFile("file", bytes);
+
+        assertThatThrownBy(() -> userService.uploadUserProfileImage(userId, multipartFile))
+                .isInstanceOf(NotEnoughAuthorityException.class)
+                .hasMessage("You don't have the right to interact with this user");
+    }
+
+    @Test
+    void uploadUnexistingUserProfileImage() {
+        Long userId = FAKER.number().randomNumber();
+
+        String bucketName = FAKER.lorem().word();
+
+        when(s3Bucket.getName())
+                .thenReturn(bucketName);
+
+        byte[] bytes = FAKER.lorem().word().getBytes();
+
+        MultipartFile multipartFile =
+                new MockMultipartFile("file", bytes);
+
+        assertThatThrownBy(() -> userService.uploadUserProfileImage(userId, multipartFile))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("User with id [%s] does not exist".formatted(userId));
+    }
+
+    @Test
+    void getCustomerImage() {
+        Long userId = FAKER.number().randomNumber();
+
+        User admin = createUserByRole(Role.ADMIN);
+
+        when(userRepository.findById(userId))
+                .thenReturn(Optional.ofNullable(admin));
+
+        when(authenticationUtil.isUserPermittedToInteractWith(admin.getRole()))
+                .thenReturn(true);
+
+        when(authenticationUtil.isUserInteractingWithItself(admin))
+                .thenReturn(true);
+
+        admin.setProfileImageId(UUID.randomUUID().toString());
+
+        String bucketName = FAKER.lorem().word();
+
+        when(s3Bucket.getName()).thenReturn(bucketName);
+
+        byte[] expectedImage = FAKER.lorem().word().getBytes();
+
+        when(s3Service.getObject(eq(bucketName), any()))
+                .thenReturn(expectedImage);
+
+        byte[] userImage = userService.getUserImage(userId);
+
+        assertThat(userImage).isEqualTo(expectedImage);
+    }
+
+    @Test
+    void getCustomerUnexistingImage() {
+        Long userId = FAKER.number().randomNumber();
+
+        User admin = createUserByRole(Role.ADMIN);
+
+        when(userRepository.findById(userId))
+                .thenReturn(Optional.ofNullable(admin));
+
+        when(authenticationUtil.isUserPermittedToInteractWith(admin.getRole()))
+                .thenReturn(true);
+
+        when(authenticationUtil.isUserInteractingWithItself(admin))
+                .thenReturn(true);
+
+        assertThatThrownBy(() -> userService.getUserImage(userId))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Customer with id [%s] profile image not found".formatted(userId));
+    }
+    @Test
+    void getCustomerImageWithInsufficientAuthority() {
+        Long userId = FAKER.number().randomNumber();
+
+        User student = createUserByRole(Role.STUDENT);
+
+        when(userRepository.findById(userId))
+                .thenReturn(Optional.ofNullable(student));
+
+        when(authenticationUtil.isUserPermittedToInteractWith(student.getRole()))
+                .thenReturn(false);
+
+        assertThatThrownBy(() -> userService.getUserImage(userId))
+                .isInstanceOf(NotEnoughAuthorityException.class)
+                .hasMessage("You don't have the right interact with this user");
+    }
+
+    @Test
+    void getUnexistingCustomerImage() {
+        Long userId = FAKER.number().randomNumber();
+
+        assertThatThrownBy(() -> userService.getUserImage(userId))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("User with id [%s] does not exist".formatted(userId));
     }
 }
