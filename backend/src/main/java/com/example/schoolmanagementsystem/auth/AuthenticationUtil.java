@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AuthenticationUtil {
-    public User getRequestUser(){
+    public User getRequestUser() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
@@ -22,7 +22,8 @@ public class AuthenticationUtil {
     public boolean isUserPermittedToInteractWith(Role roleToCheck) {
         Role requestRole = this.getRequestUser().getRole();
 
-        if ((requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.TEACHER))||
+        if ((requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.ADMIN)) ||
+                (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.TEACHER)) ||
                 (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.STUDENT))) {
             return true;
         }
