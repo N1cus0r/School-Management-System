@@ -50,7 +50,7 @@ public class UserProfileImageIntegrationTest extends AbstractUserIntegrationTest
         return client.get()
                 .uri(USERS_URI + "/%s/profile-image".formatted(userId))
                 .header(AUTHORIZATION, String.format("Bearer %s", jwtToken))
-                .accept(MediaType.APPLICATION_JSON)
+                .accept(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
                 .exchange()
                 .expectStatus()
                 .isOk()
@@ -63,7 +63,7 @@ public class UserProfileImageIntegrationTest extends AbstractUserIntegrationTest
         client.get()
                 .uri(USERS_URI + "/%s/profile-image".formatted(userId))
                 .header(AUTHORIZATION, String.format("Bearer %s", jwtToken))
-                .accept(MediaType.APPLICATION_JSON)
+                .accept(MediaType.valueOf(MediaType.IMAGE_JPEG_VALUE))
                 .exchange()
                 .expectStatus()
                 .isForbidden();
@@ -156,10 +156,10 @@ public class UserProfileImageIntegrationTest extends AbstractUserIntegrationTest
 
         registerUserAndExpectOkStatus(jwtToken, studentRegistrationRequest);
 
-        UserRegistrationRequest anothetStudentRegistrationRequest =
+        UserRegistrationRequest anotherStudentRegistrationRequest =
                 getStudentRegistrationRequest();
 
-        registerUserAndExpectOkStatus(jwtToken, anothetStudentRegistrationRequest);
+        registerUserAndExpectOkStatus(jwtToken, anotherStudentRegistrationRequest);
 
         AuthenticationRequest authenticationRequest =
                 new AuthenticationRequest(
@@ -169,12 +169,12 @@ public class UserProfileImageIntegrationTest extends AbstractUserIntegrationTest
 
         String studentJwtToken = getUserJwtToken(authenticationRequest);
 
-        Long anotherStudentId = getUserByEmailAndExpectOkStatus(jwtToken, anothetStudentRegistrationRequest.email()).id();
+        Long anotherStudentId = getUserByEmailAndExpectOkStatus(jwtToken, anotherStudentRegistrationRequest.email()).id();
 
         Resource image =
                 new ClassPathResource(
                         "%s.jpg"
-                                .formatted(anothetStudentRegistrationRequest.gender().name().toLowerCase())
+                                .formatted(anotherStudentRegistrationRequest.gender().name().toLowerCase())
                 );
 
         uploadUserProfileImageAndExpectForbiddenStatus(studentJwtToken, anotherStudentId, image);
