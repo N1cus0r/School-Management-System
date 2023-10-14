@@ -38,7 +38,6 @@ public class AuthenticationUtil {
         Role roleToCheck = user.getRole();
 
         return (requestRole.equals(Role.ADMIN) && user.equals(requestUser)) ||
-                (requestRole.equals(Role.TEACHER) && user.equals(requestUser)) ||
                 (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.TEACHER)) ||
                 (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.STUDENT)) ||
                 (requestRole.equals(Role.TEACHER) && roleToCheck.equals(Role.STUDENT));
