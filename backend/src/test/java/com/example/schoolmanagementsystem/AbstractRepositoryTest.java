@@ -10,9 +10,11 @@ import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
+@ActiveProfiles("dev")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = NONE)
 public abstract class AbstractRepositoryTest extends AbstractTestContainer{

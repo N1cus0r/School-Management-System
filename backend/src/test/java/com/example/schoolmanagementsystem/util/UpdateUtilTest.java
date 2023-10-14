@@ -2,8 +2,10 @@ package com.example.schoolmanagementsystem.util;
 
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
+@ActiveProfiles("dev")
 
 class UpdateUtilTest {
     private final UpdateUtil updateUtil = new UpdateUtil();

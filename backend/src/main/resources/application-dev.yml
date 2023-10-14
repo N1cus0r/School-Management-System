@@ -30,6 +30,6 @@ admin:
 aws:
   region: "eu-central-1"
   s3:
-    mock: false
+    mock: true
     bucket:
       name: "school-management-system"
