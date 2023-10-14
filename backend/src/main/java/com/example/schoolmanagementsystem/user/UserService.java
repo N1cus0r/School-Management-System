@@ -2,8 +2,8 @@ package com.example.schoolmanagementsystem.user;
 
 import com.example.schoolmanagementsystem.auth.AuthenticationUtil;
 import com.example.schoolmanagementsystem.exception.NotEnoughAuthorityException;
-import com.example.schoolmanagementsystem.exception.ResourceNotFoundException;
 import com.example.schoolmanagementsystem.exception.RequestValidationError;
+import com.example.schoolmanagementsystem.exception.ResourceNotFoundException;
 import com.example.schoolmanagementsystem.exception.UserEmailTakeException;
 import com.example.schoolmanagementsystem.s3.S3Bucket;
 import com.example.schoolmanagementsystem.s3.S3Service;
@@ -56,14 +56,13 @@ public class UserService {
             createAdminUser();
         }
     }
-
     public void registerUser(UserRegistrationRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new UserEmailTakeException("Provided email is already in use");
         }
 
-        if (!authenticationUtil.isUserPermittedToInteractWith(request.role())) {
-            throw new NotEnoughAuthorityException("You don't have the right to create users with this role");
+        if (!authenticationUtil.isUserPermittedToCreateUsersWithRole(request.role())) {
+            throw new NotEnoughAuthorityException("You don't have the right to create users with provided role");
         }
 
         User user = User.builder()
@@ -88,9 +87,8 @@ public class UserService {
     public UserDTO getUserById(Long userId) {
         User user = getUserByIdAndThrowIfNotFound(userId);
 
-        if (!authenticationUtil.isUserPermittedToInteractWith(user.getRole()) &&
-                !authenticationUtil.isUserInteractingWithItself(user)) {
-            throw new NotEnoughAuthorityException("You don't have the right to retrieve users with this role");
+        if (!authenticationUtil.isUserPermittedToGetUser(user)) {
+            throw new NotEnoughAuthorityException("You don't have the right retrieve this users information");
         }
 
         return userDTOMapper.apply(user);
@@ -150,12 +148,10 @@ public class UserService {
     }
 
     public void updateUser(Long userId, UpdateUserRequest request) {
-
         User user = getUserByIdAndThrowIfNotFound(userId);
 
-        if (!authenticationUtil.isUserPermittedToInteractWith(user.getRole()) &&
-                !authenticationUtil.isAdminInteractingWithItself(user)) {
-            throw new NotEnoughAuthorityException("You don't have the right to retrieve users with this role");
+        if (!authenticationUtil.isUserPermittedToUpdateUser(user)) {
+            throw new NotEnoughAuthorityException("You don't have the right to update this user");
         }
 
         boolean changes = false;
@@ -200,8 +196,8 @@ public class UserService {
     public void deleteUserById(Long userId) {
         User user = getUserByIdAndThrowIfNotFound(userId);
 
-        if (!authenticationUtil.isUserPermittedToInteractWith(user.getRole())) {
-            throw new NotEnoughAuthorityException("You don't have the right to interact with users with this role");
+        if (!authenticationUtil.isUserPermittedToDeleteUser(user)) {
+            throw new NotEnoughAuthorityException("You don't have the right to delete this user");
         }
 
         if (user.getProfileImageId() != null) {
@@ -217,8 +213,8 @@ public class UserService {
     public void uploadUserProfileImage(Long userId, MultipartFile file) {
         User user = getUserByIdAndThrowIfNotFound(userId);
 
-        if (!authenticationUtil.isUserPermittedToInteractWith(user.getRole())) {
-            throw new NotEnoughAuthorityException("You don't have the right to interact with this user");
+        if (!authenticationUtil.isUserPermittedToUpdateUser(user)) {
+            throw new NotEnoughAuthorityException("You don't have the right to update this user");
         }
 
         String profileImageId =
@@ -243,9 +239,8 @@ public class UserService {
     public byte[] getUserImage(Long userId) {
         User user = getUserByIdAndThrowIfNotFound(userId);
 
-        if (!authenticationUtil.isUserPermittedToInteractWith(user.getRole()) &&
-                !authenticationUtil.isUserInteractingWithItself(user)) {
-            throw new NotEnoughAuthorityException("You don't have the right interact with this user");
+        if (!authenticationUtil.isUserPermittedToGetUser(user)) {
+            throw new NotEnoughAuthorityException("You don't have the right retrieve this users information");
         }
 
         if (user.getProfileImageId() == null) {

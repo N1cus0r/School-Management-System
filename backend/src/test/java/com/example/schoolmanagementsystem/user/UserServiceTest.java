@@ -122,8 +122,7 @@ class UserServiceTest extends AbstractServiceTest {
         when(userRepository.existsByEmail(request.email()))
                 .thenReturn(false);
 
-        when(authenticationUtil.isUserPermittedToInteractWith(
-                request.role()))
+        when(authenticationUtil.isUserPermittedToCreateUsersWithRole(request.role()))
                 .thenReturn(true);
 
         when(passwordEncoder.encode(request.password()))
@@ -187,12 +186,12 @@ class UserServiceTest extends AbstractServiceTest {
         when(userRepository.existsByEmail(request.email()))
                 .thenReturn(false);
 
-        when(authenticationUtil.isUserPermittedToInteractWith(request.role()))
+        when(authenticationUtil.isUserPermittedToCreateUsersWithRole(request.role()))
                 .thenReturn(false);
 
         assertThatThrownBy(() -> userService.registerUser(request))
                 .isInstanceOf(NotEnoughAuthorityException.class)
-                .hasMessage("You don't have the right to create users with this role");
+                .hasMessage("You don't have the right to create users with provided role");
     }
 
     @Test
@@ -204,7 +203,7 @@ class UserServiceTest extends AbstractServiceTest {
         when(userRepository.findById(userId))
                 .thenReturn(Optional.ofNullable(user));
 
-        when(authenticationUtil.isUserPermittedToInteractWith(user.getRole()))
+        when(authenticationUtil.isUserPermittedToGetUser(user))
                 .thenReturn(true);
 
         ArgumentCaptor<User> userArgumentCaptor =
@@ -236,12 +235,12 @@ class UserServiceTest extends AbstractServiceTest {
         when(userRepository.findById(userId))
                 .thenReturn(Optional.ofNullable(user));
 
-        when(authenticationUtil.isUserPermittedToInteractWith(user.getRole()))
+        when(authenticationUtil.isUserPermittedToGetUser(user))
                 .thenReturn(false);
 
         assertThatThrownBy(() -> userService.getUserById(userId))
                 .isInstanceOf(NotEnoughAuthorityException.class)
-                .hasMessage("You don't have the right to retrieve users with this role");
+                .hasMessage("You don't have the right retrieve this users information");
     }
 
     @Test
@@ -419,7 +418,7 @@ class UserServiceTest extends AbstractServiceTest {
                         LocalDate.now()
                 );
 
-        when(authenticationUtil.isUserPermittedToInteractWith(user.getRole()))
+        when(authenticationUtil.isUserPermittedToUpdateUser(user))
                 .thenReturn(true);
 
         when(userRepository.existsByEmail(userUpdateRequest.email()))
@@ -479,12 +478,12 @@ class UserServiceTest extends AbstractServiceTest {
                         LocalDate.now()
                 );
 
-        when(authenticationUtil.isUserPermittedToInteractWith(user.getRole()))
+        when(authenticationUtil.isUserPermittedToUpdateUser(user))
                 .thenReturn(false);
 
         assertThatThrownBy(() -> userService.updateUser(user.getId(), userUpdateRequest))
                 .isInstanceOf(NotEnoughAuthorityException.class)
-                .hasMessage("You don't have the right to retrieve users with this role");
+                .hasMessage("You don't have the right to update this user");
     }
 
     @Test
@@ -503,7 +502,7 @@ class UserServiceTest extends AbstractServiceTest {
                         LocalDate.now()
                 );
 
-        when(authenticationUtil.isUserPermittedToInteractWith(user.getRole()))
+        when(authenticationUtil.isUserPermittedToUpdateUser(user))
                 .thenReturn(true);
 
         when(userRepository.existsByEmail(userUpdateRequest.email()))
@@ -530,7 +529,7 @@ class UserServiceTest extends AbstractServiceTest {
                         user.getDateOfBirth()
                 );
 
-        when(authenticationUtil.isUserPermittedToInteractWith(user.getRole()))
+        when(authenticationUtil.isUserPermittedToUpdateUser(user))
                 .thenReturn(true);
 
         when(updateUtil.isFieldNullOrWithoutChange(any(), any()))
@@ -552,7 +551,7 @@ class UserServiceTest extends AbstractServiceTest {
         when(userRepository.findById(user.getId()))
                 .thenReturn(Optional.of(user));
 
-        when(authenticationUtil.isUserPermittedToInteractWith(user.getRole()))
+        when(authenticationUtil.isUserPermittedToDeleteUser(user))
                 .thenReturn(true);
 
         String bucketName = FAKER.lorem().word();
@@ -591,12 +590,12 @@ class UserServiceTest extends AbstractServiceTest {
         when(userRepository.findById(user.getId()))
                 .thenReturn(Optional.of(user));
 
-        when(authenticationUtil.isUserPermittedToInteractWith(user.getRole()))
+        when(authenticationUtil.isUserPermittedToDeleteUser(user))
                 .thenReturn(false);
 
         assertThatThrownBy(() -> userService.deleteUserById(user.getId()))
                 .isInstanceOf(NotEnoughAuthorityException.class)
-                .hasMessage("You don't have the right to interact with users with this role");
+                .hasMessage("You don't have the right to delete this user");
     }
 
 
@@ -609,7 +608,7 @@ class UserServiceTest extends AbstractServiceTest {
         when(userRepository.findById(userId))
                 .thenReturn(Optional.ofNullable(admin));
 
-        when(authenticationUtil.isUserPermittedToInteractWith(admin.getRole()))
+        when(authenticationUtil.isUserPermittedToUpdateUser(admin))
                 .thenReturn(true);
 
         String bucketName = FAKER.lorem().word();
@@ -653,7 +652,7 @@ class UserServiceTest extends AbstractServiceTest {
         when(userRepository.findById(userId))
                 .thenReturn(Optional.ofNullable(student));
 
-        when(authenticationUtil.isUserPermittedToInteractWith(student.getRole()))
+        when(authenticationUtil.isUserPermittedToUpdateUser(student))
                 .thenReturn(false);
 
         String bucketName = FAKER.lorem().word();
@@ -668,7 +667,7 @@ class UserServiceTest extends AbstractServiceTest {
 
         assertThatThrownBy(() -> userService.uploadUserProfileImage(userId, multipartFile))
                 .isInstanceOf(NotEnoughAuthorityException.class)
-                .hasMessage("You don't have the right to interact with this user");
+                .hasMessage("You don't have the right to update this user");
     }
 
     @Test
@@ -699,10 +698,7 @@ class UserServiceTest extends AbstractServiceTest {
         when(userRepository.findById(userId))
                 .thenReturn(Optional.ofNullable(admin));
 
-        when(authenticationUtil.isUserPermittedToInteractWith(admin.getRole()))
-                .thenReturn(true);
-
-        when(authenticationUtil.isUserInteractingWithItself(admin))
+        when(authenticationUtil.isUserPermittedToGetUser(admin))
                 .thenReturn(true);
 
         admin.setProfileImageId(UUID.randomUUID().toString());
@@ -730,10 +726,7 @@ class UserServiceTest extends AbstractServiceTest {
         when(userRepository.findById(userId))
                 .thenReturn(Optional.ofNullable(admin));
 
-        when(authenticationUtil.isUserPermittedToInteractWith(admin.getRole()))
-                .thenReturn(true);
-
-        when(authenticationUtil.isUserInteractingWithItself(admin))
+        when(authenticationUtil.isUserPermittedToGetUser(admin))
                 .thenReturn(true);
 
         assertThatThrownBy(() -> userService.getUserImage(userId))
@@ -749,12 +742,12 @@ class UserServiceTest extends AbstractServiceTest {
         when(userRepository.findById(userId))
                 .thenReturn(Optional.ofNullable(student));
 
-        when(authenticationUtil.isUserPermittedToInteractWith(student.getRole()))
+        when(authenticationUtil.isUserPermittedToGetUser(student))
                 .thenReturn(false);
 
         assertThatThrownBy(() -> userService.getUserImage(userId))
                 .isInstanceOf(NotEnoughAuthorityException.class)
-                .hasMessage("You don't have the right interact with this user");
+                .hasMessage("You don't have the right retrieve this users information");
     }
 
     @Test
