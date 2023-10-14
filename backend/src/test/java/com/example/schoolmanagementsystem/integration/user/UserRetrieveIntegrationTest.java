@@ -3,24 +3,18 @@ package com.example.schoolmanagementsystem.integration.user;
 import com.example.schoolmanagementsystem.auth.AuthenticationRequest;
 import com.example.schoolmanagementsystem.user.Role;
 import com.example.schoolmanagementsystem.user.UserDTO;
-import com.example.schoolmanagementsystem.user.UserDTOMapper;
 import com.example.schoolmanagementsystem.user.UserRegistrationRequest;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 public class UserRetrieveIntegrationTest extends AbstractUserIntegrationTest {
-    @Autowired
-    private UserDTOMapper userDTOMapper;
-
     private void getUserByIdAndExpectStatusForbidden(String jwtToken, Long userId) {
         client.get()
                 .uri(USERS_URI + "/{id}", userId)
