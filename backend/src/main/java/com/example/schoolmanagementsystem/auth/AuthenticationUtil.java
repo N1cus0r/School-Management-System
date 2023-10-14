@@ -24,11 +24,9 @@ public class AuthenticationUtil {
 
         if ((requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.ADMIN)) ||
                 (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.TEACHER)) ||
-                (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.STUDENT))) {
-            return true;
-        }
-
-        if ((requestRole.equals(Role.TEACHER) && roleToCheck.equals(Role.STUDENT))) {
+                (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.STUDENT)) ||
+                (requestRole.equals(Role.TEACHER) && roleToCheck.equals(Role.STUDENT))
+        ) {
             return true;
         }
 
