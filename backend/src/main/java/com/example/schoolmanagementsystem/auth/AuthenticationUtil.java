@@ -11,26 +11,47 @@ public class AuthenticationUtil {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    public boolean isUserInteractingWithItself(User user) {
-        return this.getRequestUser().equals(user);
-    }
-
-    public boolean isAdminInteractingWithItself(User user) {
-        return this.getRequestUser().equals(user) && user.getRole().equals(Role.ADMIN);
-    }
-
-    public boolean isUserPermittedToInteractWith(Role roleToCheck) {
+    public boolean isUserPermittedToCreateUsersWithRole(Role roleToCheck) {
         Role requestRole = this.getRequestUser().getRole();
 
-        if ((requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.ADMIN)) ||
+        return (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.TEACHER)) ||
+                (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.STUDENT)) ||
+                (requestRole.equals(Role.TEACHER) && roleToCheck.equals(Role.STUDENT));
+    }
+
+    public boolean isUserPermittedToGetUser(User user) {
+        User requestUser = this.getRequestUser();
+        Role requestRole = requestUser.getRole();
+        Role roleToCheck = user.getRole();
+
+        return (requestRole.equals(Role.ADMIN) && user.equals(requestUser)) ||
+                (requestRole.equals(Role.TEACHER) && user.equals(requestUser)) ||
+                (requestRole.equals(Role.STUDENT) && user.equals(requestUser)) ||
                 (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.TEACHER)) ||
                 (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.STUDENT)) ||
-                (requestRole.equals(Role.TEACHER) && roleToCheck.equals(Role.STUDENT))
-        ) {
-            return true;
-        }
+                (requestRole.equals(Role.TEACHER) && roleToCheck.equals(Role.STUDENT));
+    }
 
-        return false;
+    public boolean isUserPermittedToUpdateUser(User user) {
+        User requestUser = this.getRequestUser();
+        Role requestRole = requestUser.getRole();
+        Role roleToCheck = user.getRole();
+
+        return (requestRole.equals(Role.ADMIN) && user.equals(requestUser)) ||
+                (requestRole.equals(Role.TEACHER) && user.equals(requestUser)) ||
+                (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.TEACHER)) ||
+                (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.STUDENT)) ||
+                (requestRole.equals(Role.TEACHER) && roleToCheck.equals(Role.STUDENT));
+    }
+
+    public boolean isUserPermittedToDeleteUser(User user) {
+        User requestUser = this.getRequestUser();
+        Role requestRole = requestUser.getRole();
+        Role roleToCheck = user.getRole();
+
+        return (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.TEACHER)) ||
+                (requestRole.equals(Role.ADMIN) && roleToCheck.equals(Role.STUDENT)) ||
+                (requestRole.equals(Role.TEACHER) && roleToCheck.equals(Role.STUDENT));
     }
 
     public boolean isUserStudent() {
