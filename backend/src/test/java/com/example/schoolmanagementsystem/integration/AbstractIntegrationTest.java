@@ -7,6 +7,7 @@ import com.example.schoolmanagementsystem.user.*;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;
@@ -30,14 +31,10 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
         webEnvironment = RANDOM_PORT,
         classes = Main.class
 )
-@TestPropertySource(locations = "classpath:application.properties")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractIntegrationTest {
     @Autowired
     public WebTestClient client;
-
-    @Autowired
-    public ResourceLoader resourceLoader;
 
     @Autowired
     public UserRepository userRepository;
@@ -46,20 +43,21 @@ public abstract class AbstractIntegrationTest {
     public final String AUTH_URI = "/api/v1/auth";
     public final String USERS_URI = "/api/v1/users";
 
+    @Value("${admin.email}")
+    private String adminEmail;
+
+    @Value("${admin.password}")
+    private String adminPassword;
+
     public String getRandomString() {
         return FAKER.lorem().characters(4, 5) + FAKER.lorem().word();
     }
 
     public String getAdminJwtToken() throws IOException {
-        Resource resource = resourceLoader.getResource("classpath:application.properties");
-        InputStream inputStream = resource.getInputStream();
-        Properties properties = new Properties();
-        properties.load(inputStream);
-
         AuthenticationRequest authenticationRequest =
                 new AuthenticationRequest(
-                        properties.getProperty("admin.email").strip(),
-                        properties.getProperty("admin.password")
+                        adminEmail,
+                        adminPassword
                 );
 
         return getUserJwtToken(authenticationRequest);

@@ -1,46 +1,30 @@
 package com.example.schoolmanagementsystem.integration.auth;
 
-import com.example.schoolmanagementsystem.Main;
 import com.example.schoolmanagementsystem.auth.AuthenticationRequest;
-import com.example.schoolmanagementsystem.auth.AuthenticationResponse;
 import com.example.schoolmanagementsystem.integration.AbstractIntegrationTest;
 import com.example.schoolmanagementsystem.jwt.JwtUtil;
-import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@SpringBootTest(
-        webEnvironment = RANDOM_PORT,
-        classes = Main.class
-)
-@TestPropertySource(locations = "classpath:application.properties")
-public class AuthenticationIntegrationTest  extends AbstractIntegrationTest {
-
+public class AuthenticationIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Value("${admin.email}")
+    private String adminEmail;
+
+    @Value("${admin.password}")
+    private String adminPassword;
+
     @Test
     void canLogin() throws IOException {
-        Resource resource = resourceLoader.getResource("classpath:application.properties");
-        InputStream inputStream = resource.getInputStream();
-        Properties properties = new Properties();
-        properties.load(inputStream);
-
         AuthenticationRequest invalidAuthenticationRequest =
                 new AuthenticationRequest(
                         FAKER.internet().safeEmailAddress(),
@@ -49,8 +33,8 @@ public class AuthenticationIntegrationTest  extends AbstractIntegrationTest {
 
         AuthenticationRequest validAuthenticationRequest =
                 new AuthenticationRequest(
-                        properties.getProperty("admin.email").strip(),
-                        properties.getProperty("admin.password")
+                        adminEmail,
+                        adminPassword
                 );
 
         client.post()
