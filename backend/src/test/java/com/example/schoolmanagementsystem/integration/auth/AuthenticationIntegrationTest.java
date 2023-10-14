@@ -3,6 +3,7 @@ package com.example.schoolmanagementsystem.integration.auth;
 import com.example.schoolmanagementsystem.Main;
 import com.example.schoolmanagementsystem.auth.AuthenticationRequest;
 import com.example.schoolmanagementsystem.auth.AuthenticationResponse;
+import com.example.schoolmanagementsystem.integration.AbstractIntegrationTest;
 import com.example.schoolmanagementsystem.jwt.JwtUtil;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
@@ -29,19 +30,10 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
         classes = Main.class
 )
 @TestPropertySource(locations = "classpath:application.properties")
-public class AuthenticationIntegrationTest  {
-    @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
-    private WebTestClient client;
+public class AuthenticationIntegrationTest  extends AbstractIntegrationTest {
 
     @Autowired
     private JwtUtil jwtUtil;
-    private final Faker FAKER = new Faker();
-    private static final String AUTH_URI = "/api/v1/auth";
-
-
     @Test
     void canLogin() throws IOException {
         Resource resource = resourceLoader.getResource("classpath:application.properties");
@@ -70,18 +62,8 @@ public class AuthenticationIntegrationTest  {
                 .expectStatus()
                 .isUnauthorized();
 
-        String jwtToken = client.post()
-                .uri(AUTH_URI + "/login")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Mono.just(validAuthenticationRequest), AuthenticationRequest.class)
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBody(new ParameterizedTypeReference<AuthenticationResponse>() {})
-                .returnResult()
-                .getResponseBody()
-                .token();
+
+        String jwtToken = getUserJwtToken(validAuthenticationRequest);
 
         assertThat(jwtUtil.isTokenValid(jwtToken, validAuthenticationRequest.email()))
                 .isTrue();

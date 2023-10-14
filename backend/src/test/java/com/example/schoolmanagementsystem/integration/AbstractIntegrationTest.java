@@ -37,7 +37,7 @@ public abstract class AbstractIntegrationTest {
     public WebTestClient client;
 
     @Autowired
-    private ResourceLoader resourceLoader;
+    public ResourceLoader resourceLoader;
 
     @Autowired
     public UserRepository userRepository;
