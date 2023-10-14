@@ -76,7 +76,10 @@ public class UserController {
         userService.uploadUserProfileImage(userId, file);
     }
 
-    @GetMapping("{id}/profile-image")
+    @GetMapping(
+            value = "{id}/profile-image",
+            produces = MediaType.IMAGE_JPEG_VALUE
+    )
     public byte[] getUserProfileImage(
             @PathVariable("id") Long userId
     ) {
