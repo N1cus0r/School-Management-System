@@ -545,16 +545,30 @@ class UserServiceTest extends AbstractServiceTest {
     void deleteUserById() {
         User user = createUserByRole(Role.TEACHER);
 
+        String userProfileImageId = UUID.randomUUID().toString();
+
+        user.setProfileImageId(userProfileImageId);
+
         when(userRepository.findById(user.getId()))
                 .thenReturn(Optional.of(user));
 
         when(authenticationUtil.isUserPermittedToInteractWith(user.getRole()))
                 .thenReturn(true);
 
+        String bucketName = FAKER.lorem().word();
+
+        when(s3Bucket.getName())
+                .thenReturn(bucketName);
+
+        userService.deleteUserById(user.getId());
+
         ArgumentCaptor<User> userArgumentCaptor =
                 ArgumentCaptor.forClass(User.class);
 
-        userService.deleteUserById(user.getId());
+        verify(s3Service).deleteObject(
+                bucketName,
+                s3Bucket.PROFILE_IMAGE_PATH.formatted(user.getId(), user.getProfileImageId())
+        );
 
         verify(userRepository).delete(userArgumentCaptor.capture());
 
