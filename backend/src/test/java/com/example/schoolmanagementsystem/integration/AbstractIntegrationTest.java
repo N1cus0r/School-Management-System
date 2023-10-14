@@ -131,32 +131,6 @@ public abstract class AbstractIntegrationTest {
                 .isOk();
     }
 
-    public List<UserDTO> getAllUsersByRoleAndExpectOkStatus(String jwtToken, Role role) {
-        if (role.equals(Role.ADMIN)) {
-            throw new RuntimeException("Invalid role. You cant retrieve admins");
-        }
-
-        return client.get()
-                .uri(USERS_URI + "/" + role.name().toLowerCase() + "s")
-                .accept(MediaType.APPLICATION_JSON)
-                .header(AUTHORIZATION, String.format("Bearer %s", jwtToken))
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBodyList(new ParameterizedTypeReference<UserDTO>() {
-                })
-                .returnResult()
-                .getResponseBody();
-    }
-
-    public Long getUserIdByEmailFromResultList(String userEmail, List<UserDTO> users) {
-        return users.stream()
-                .filter(u -> u.email().equals(userEmail))
-                .map(UserDTO::id)
-                .findFirst()
-                .orElseThrow();
-    }
-
     public UserDTO getUserByEmailAndExpectOkStatus(String jwtToken, String email) {
         return client.get()
                 .uri(USERS_URI + "/byEmail/" + email)
