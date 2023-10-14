@@ -8,7 +8,7 @@ spring:
   codec:
     max-in-memory-size: 10MB
   datasource:
-    url: jdbc:postgresql://TODO:5432/postgres
+    url: jdbc:postgresql://awseb-e-phxyptypfq-stack-awsebrdsdatabase-98zuvkkdzk3n.c9tkfz4bm0mm.eu-central-1.rds.amazonaws.com:5432/postgres
     username: nicusor
     password: password
     driver-class-name: org.postgresql.Driver
