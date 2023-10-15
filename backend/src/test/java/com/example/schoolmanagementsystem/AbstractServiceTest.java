@@ -13,7 +13,6 @@ import java.time.LocalDate;
 import java.util.HashSet;
 
 @ActiveProfiles("dev")
-@TestPropertySource(locations = "classpath:application.properties")
 @ExtendWith(SpringExtension.class)
 public abstract class AbstractServiceTest {
     public final Faker FAKER = new Faker();
