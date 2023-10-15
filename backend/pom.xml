@@ -152,6 +152,7 @@
 						<configuration>
 							<arguments>
 								<argument>--server.port=${tomcat.http.port}</argument>
+								<argument>--spring.profiles.active=dev</argument>
 							</arguments>
 						</configuration>
 					</execution>
@@ -174,7 +175,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<configuration>
-					<argLine>-Dspring.profiles.active=dev</argLine>
 					<classesDirectory>${project.build.outputDirectory}</classesDirectory>
 					<includes>
 						<include>**/*IntegrationTest.java</include>
@@ -220,5 +220,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
