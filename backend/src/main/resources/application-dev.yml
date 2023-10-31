@@ -23,6 +23,10 @@ spring:
 security:
   secret-key: "KZ87wAMYYyVByiy6JoXkrKrldECv2Sbi"
 
+cors:
+  allowed-origins: "*"
+  allowed-methods: "*"
+
 admin:
   email: "admin@example.com"
   password: "password"
