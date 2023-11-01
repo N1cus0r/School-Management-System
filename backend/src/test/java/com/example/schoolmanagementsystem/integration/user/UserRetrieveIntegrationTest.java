@@ -15,9 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 public class UserRetrieveIntegrationTest extends AbstractUserIntegrationTest {
-    private void getUserByIdAndExpectStatusForbidden(String jwtToken, Long userId) {
+
+    private void getUserByEmailAndExpectForbiddenStatus(String jwtToken, String email) {
         client.get()
-                .uri(USERS_URI + "/{id}", userId)
+                .uri(USERS_URI + "/{email}", email)
                 .accept(MediaType.APPLICATION_JSON)
                 .header(AUTHORIZATION, String.format("Bearer %s", jwtToken))
                 .exchange()
@@ -58,7 +59,7 @@ public class UserRetrieveIntegrationTest extends AbstractUserIntegrationTest {
     }
 
     @Test
-    void canAdminGetTeacherAndStudentAndItselfById() throws IOException {
+    void canAdminGetTeacherAndStudentAndItselfByEmail() throws IOException {
         String jwtToken = getAdminJwtToken();
 
         UserRegistrationRequest studentRegistrationRequest =
@@ -71,28 +72,15 @@ public class UserRetrieveIntegrationTest extends AbstractUserIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        UserDTO admin = getUserByEmailAndExpectOkStatus(jwtToken, getAdminUser().getEmail());
+        getUserByEmailAndExpectOkStatus(jwtToken, getAdminUser().getEmail());
 
-        UserDTO teacher = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email());
+        getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email());
 
-        UserDTO student = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
-
-        UserDTO expectedAdmin = getUserByIdAndExpectStatusOk(jwtToken, admin.id());
-
-        UserDTO expectedTeacher = getUserByIdAndExpectStatusOk(jwtToken, teacher.id());
-
-        UserDTO expectedStudent = getUserByIdAndExpectStatusOk(jwtToken, student.id());
-
-        assertThat(expectedAdmin).isEqualTo(admin);
-
-        assertThat(expectedTeacher).isEqualTo(teacher);
-
-        assertThat(expectedStudent).isEqualTo(student);
-
+        getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
     }
 
     @Test
-    void canTeacherGetStudentAndItselfById() throws IOException {
+    void canTeacherGetStudentAndItselfByEmail() throws IOException {
         String jwtToken = getAdminJwtToken();
 
         UserRegistrationRequest studentRegistrationRequest =
@@ -110,7 +98,6 @@ public class UserRetrieveIntegrationTest extends AbstractUserIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, invalidTeacherRegistrationRequest);
 
-
         AuthenticationRequest authenticationRequest =
                 new AuthenticationRequest(
                         teacherRegistrationRequest.email(),
@@ -119,25 +106,17 @@ public class UserRetrieveIntegrationTest extends AbstractUserIntegrationTest {
 
         String teacherJwtToken = getUserJwtToken(authenticationRequest);
 
-        UserDTO student = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
+        getUserByEmailAndExpectOkStatus(teacherJwtToken, studentRegistrationRequest.email());
 
-        UserDTO teacher = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email());
+        getUserByEmailAndExpectOkStatus(teacherJwtToken, teacherRegistrationRequest.email());
 
-        UserDTO invalidTeacher = getUserByEmailAndExpectOkStatus(jwtToken, invalidTeacherRegistrationRequest.email());
+        getUserByEmailAndExpectForbiddenStatus(teacherJwtToken, invalidTeacherRegistrationRequest.email());
 
-        getUserByIdAndExpectStatusForbidden(teacherJwtToken, invalidTeacher.id());
 
-        UserDTO expectedStudent = getUserByIdAndExpectStatusOk(teacherJwtToken, student.id());
-
-        UserDTO expectedTeacher = getUserByIdAndExpectStatusOk(teacherJwtToken, teacher.id());
-
-        assertThat(expectedStudent).isEqualTo(student);
-
-        assertThat(expectedTeacher).isEqualTo(teacher);
     }
 
     @Test
-    void canStudentGetItselfById() throws IOException {
+    void canStudentGetItselfByEmail() throws IOException {
         String jwtToken = getAdminJwtToken();
 
         UserRegistrationRequest studentRegistrationRequest =
@@ -163,28 +142,20 @@ public class UserRetrieveIntegrationTest extends AbstractUserIntegrationTest {
 
         String studentJwtToken = getUserJwtToken(authenticationRequest);
 
-        UserDTO student = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
+        getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
 
-        UserDTO invalidStudent = getUserByEmailAndExpectOkStatus(jwtToken, invalidStudentRegistrationRequest.email());
+        getUserByEmailAndExpectForbiddenStatus(studentJwtToken, invalidStudentRegistrationRequest.email());
 
-        UserDTO teacher = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email());
-
-        getUserByIdAndExpectStatusForbidden(studentJwtToken, teacher.id());
-
-        getUserByIdAndExpectStatusForbidden(studentJwtToken, invalidStudent.id());
-
-        UserDTO expectedStudent = getUserByIdAndExpectStatusOk(studentJwtToken, student.id());
-
-        assertThat(expectedStudent).isEqualTo(student);
+        getUserByEmailAndExpectForbiddenStatus(studentJwtToken, teacherRegistrationRequest.email());
     }
 
     @Test
     void canAdminSearchStudentsByFullName() throws IOException {
         String jwtToken = getAdminJwtToken();
 
-        int numberOfStudentsMatchingPrefix = FAKER.number().numberBetween(2,3);
+        int numberOfStudentsMatchingPrefix = FAKER.number().numberBetween(2, 3);
 
-        int numberOfStudentsNotMatchingPrefix = FAKER.number().numberBetween(2,3);
+        int numberOfStudentsNotMatchingPrefix = FAKER.number().numberBetween(2, 3);
 
         String prefix = FAKER.lorem().word();
 
@@ -220,9 +191,9 @@ public class UserRetrieveIntegrationTest extends AbstractUserIntegrationTest {
 
         String teacherJwtToken = getUserJwtToken(authenticationRequest);
 
-        int numberOfStudentsMatchingPrefix = FAKER.number().numberBetween(2,3);
+        int numberOfStudentsMatchingPrefix = FAKER.number().numberBetween(2, 3);
 
-        int numberOfStudentsNotMatchingPrefix = FAKER.number().numberBetween(2,3);
+        int numberOfStudentsNotMatchingPrefix = FAKER.number().numberBetween(2, 3);
 
         String prefix = FAKER.lorem().word();
 
@@ -270,9 +241,9 @@ public class UserRetrieveIntegrationTest extends AbstractUserIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        int numberOfTeachersMatchingPrefix = FAKER.number().numberBetween(2,3);
+        int numberOfTeachersMatchingPrefix = FAKER.number().numberBetween(2, 3);
 
-        int numberOfTeachersNotMatchingPrefix = FAKER.number().numberBetween(2,3);
+        int numberOfTeachersNotMatchingPrefix = FAKER.number().numberBetween(2, 3);
 
         String prefix = getRandomString();
 

@@ -13,9 +13,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 public class UserUpdateIntegrationTest extends AbstractUserIntegrationTest {
-    private UpdateUserRequest getUserUpdateRequest(Role role) {
+    private UpdateUserRequest getUserUpdateRequest() {
         return new UpdateUserRequest(
-                null,
+                FAKER.internet().safeEmailAddress(),
                 FAKER.name().fullName(),
                 Gender.MALE,
                 null,
@@ -24,15 +24,15 @@ public class UserUpdateIntegrationTest extends AbstractUserIntegrationTest {
     }
 
     private UpdateUserRequest getAdminUpdateRequest() {
-        return getUserUpdateRequest(Role.ADMIN);
+        return getUserUpdateRequest();
     }
 
     private UpdateUserRequest getStudentUpdateRequest() {
-        return getUserUpdateRequest(Role.STUDENT);
+        return getUserUpdateRequest();
     }
 
     private UpdateUserRequest getTeacherUpdateRequest() {
-        return getUserUpdateRequest(Role.TEACHER);
+        return getUserUpdateRequest();
     }
 
     private void updateUserAndExpectOkStatus(String jwtToken, Long userId, UpdateUserRequest request) {
@@ -61,12 +61,13 @@ public class UserUpdateIntegrationTest extends AbstractUserIntegrationTest {
 
     private boolean isUserUpdatedSuccessfully(UserDTO resultUser, UpdateUserRequest updateRequest) {
         return updateRequest.fullName().equals(resultUser.fullName()) &&
+                updateRequest.email().equals(updateRequest.email()) &&
                 updateRequest.gender().equals(updateRequest.gender()) &&
                 updateRequest.dateOfBirth().equals(updateRequest.dateOfBirth());
     }
 
     @Test
-    void canAdminUpdateItselfAndTeacherAndStudent() throws IOException {
+    void canAdminTeacherAndStudent() throws IOException {
         String jwtToken = getAdminJwtToken();
 
         UserRegistrationRequest studentRegistrationRequest =
@@ -79,31 +80,21 @@ public class UserUpdateIntegrationTest extends AbstractUserIntegrationTest {
 
         registerUserAndExpectOkStatus(jwtToken, teacherRegistrationRequest);
 
-        UpdateUserRequest adminUpdateRequest = getAdminUpdateRequest();
-
         UpdateUserRequest teacherUpdateRequest = getTeacherUpdateRequest();
 
         UpdateUserRequest studentUpdateRequest = getStudentUpdateRequest();
-
-        Long adminId = getAdminUser().getId();
 
         Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
 
         Long teacherId = getUserByEmailAndExpectOkStatus(jwtToken, teacherRegistrationRequest.email()).id();
 
-        updateUserAndExpectOkStatus(jwtToken, adminId, adminUpdateRequest);
-
         updateUserAndExpectOkStatus(jwtToken, teacherId, teacherUpdateRequest);
 
         updateUserAndExpectOkStatus(jwtToken, studentId, studentUpdateRequest);
 
-        UserDTO updatedAdmin = getUserByIdAndExpectStatusOk(jwtToken, adminId);
+        UserDTO updatedTeacher = getUserByEmailAndExpectOkStatus(jwtToken, teacherUpdateRequest.email());
 
-        UserDTO updatedTeacher = getUserByIdAndExpectStatusOk(jwtToken, teacherId);
-
-        UserDTO updatedStudent = getUserByIdAndExpectStatusOk(jwtToken, studentId);
-
-        assertThat(isUserUpdatedSuccessfully(updatedAdmin, adminUpdateRequest)).isTrue();
+        UserDTO updatedStudent = getUserByEmailAndExpectOkStatus(jwtToken, studentUpdateRequest.email());
 
         assertThat(isUserUpdatedSuccessfully(updatedTeacher, teacherUpdateRequest)).isTrue();
 
@@ -150,7 +141,7 @@ public class UserUpdateIntegrationTest extends AbstractUserIntegrationTest {
 
         updateUserAndExpectOkStatus(teacherJwtToken, studentId, studentUpdateRequest);
 
-        UserDTO updatedStudent = getUserByIdAndExpectStatusOk(jwtToken, studentId);
+        UserDTO updatedStudent = getUserByEmailAndExpectOkStatus(jwtToken, studentUpdateRequest.email());
 
         assertThat(isUserUpdatedSuccessfully(updatedStudent, studentUpdateRequest)).isTrue();
     }

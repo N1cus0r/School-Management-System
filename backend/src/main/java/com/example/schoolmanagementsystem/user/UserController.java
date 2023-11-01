@@ -15,12 +15,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("{id}")
-    public UserDTO getUserById(@PathVariable("id") Long userId) {
-        return userService.getUserById(userId);
-    }
-
-    @GetMapping("byEmail/{email}")
+    @GetMapping("{email}")
     public UserDTO getUserByEmail(
             @PathVariable("email") String email
     ) {

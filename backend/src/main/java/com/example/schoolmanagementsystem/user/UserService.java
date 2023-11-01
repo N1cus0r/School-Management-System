@@ -84,24 +84,14 @@ public class UserService {
                         "User with id [%s] does not exist".formatted(userId)));
     }
 
-    public UserDTO getUserById(Long userId) {
-        User user = getUserByIdAndThrowIfNotFound(userId);
+    public UserDTO getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User with email [%s] does not exist".formatted(email)));
 
         if (!authenticationUtil.isUserPermittedToGetUser(user)) {
             throw new NotEnoughAuthorityException("You don't have the right retrieve this users information");
         }
-
-        return userDTOMapper.apply(user);
-    }
-
-    public UserDTO getUserByEmail(String email) {
-        if (!authenticationUtil.isUserAdmin()) {
-            throw new NotEnoughAuthorityException("You don't have the right to access this resource");
-        }
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "User with email [%s] does not exist".formatted(email)));
 
         return userDTOMapper.apply(user);
     }

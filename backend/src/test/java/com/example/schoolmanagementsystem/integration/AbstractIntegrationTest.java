@@ -132,7 +132,7 @@ public abstract class AbstractIntegrationTest {
 
     public UserDTO getUserByEmailAndExpectOkStatus(String jwtToken, String email) {
         return client.get()
-                .uri(USERS_URI + "/byEmail/" + email)
+                .uri(USERS_URI + "/{email}", email)
                 .accept(MediaType.APPLICATION_JSON)
                 .header(AUTHORIZATION, String.format("Bearer %s", jwtToken))
                 .exchange()

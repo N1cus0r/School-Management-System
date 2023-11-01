@@ -56,18 +56,6 @@ class UserServiceTest extends AbstractServiceTest {
     @Autowired
     private UserService userService;
 
-    private User createUserByRoleWithId(Role role, Long userId) {
-        return User.builder()
-                .id(userId)
-                .role(role)
-                .email(FAKER.internet().safeEmailAddress())
-                .password(FAKER.crypto().sha256())
-                .fullName(FAKER.name().fullName())
-                .gender(Gender.MALE)
-                .dateOfBirth(LocalDate.now())
-                .build();
-    }
-
     @Test
     void generateAnAdminUserIfNone() throws IOException {
         when(userRepository.existsByRole(Role.ADMIN))
@@ -84,10 +72,6 @@ class UserServiceTest extends AbstractServiceTest {
         verify(userRepository).existsByRole(Role.ADMIN);
 
         verify(userRepository).save(userArgumentCaptor.capture());
-
-        System.out.println(userArgumentCaptor.getValue());
-//        assertThat(userArgumentCaptor.getValue().getEmail())
-//                .isEqualTo();
     }
 
     @Test
@@ -189,61 +173,12 @@ class UserServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void getUserById() {
-        Long userId = FAKER.number().randomNumber();
-
-        User user = createUserByRoleWithId(Role.STUDENT, userId);
-
-        when(userRepository.findById(userId))
-                .thenReturn(Optional.ofNullable(user));
-
-        when(authenticationUtil.isUserPermittedToGetUser(user))
-                .thenReturn(true);
-
-        ArgumentCaptor<User> userArgumentCaptor =
-                ArgumentCaptor.forClass(User.class);
-
-        userService.getUserById(userId);
-
-        verify(userDTOMapper).apply(userArgumentCaptor.capture());
-
-        assertThat(userArgumentCaptor.getValue())
-                .isEqualTo(user);
-    }
-
-    @Test
-    void getUnexistingUserById() {
-        Long userId = FAKER.number().randomNumber();
-
-        assertThatThrownBy(() -> userService.getUserById(userId))
-                .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("User with id [%s] does not exist".formatted(userId));
-    }
-
-    @Test
-    void getUserByIdWithInsufficientAuthority() {
-        Long userId = FAKER.number().randomNumber();
-
-        User user = createUserByRoleWithId(Role.STUDENT, userId);
-
-        when(userRepository.findById(userId))
-                .thenReturn(Optional.ofNullable(user));
-
-        when(authenticationUtil.isUserPermittedToGetUser(user))
-                .thenReturn(false);
-
-        assertThatThrownBy(() -> userService.getUserById(userId))
-                .isInstanceOf(NotEnoughAuthorityException.class)
-                .hasMessage("You don't have the right retrieve this users information");
-    }
-
-    @Test
     void getUserByEmail() {
         String email = FAKER.lorem().sentence();
 
         User user = createUserByRole(Role.STUDENT);
 
-        when(authenticationUtil.isUserAdmin())
+        when(authenticationUtil.isUserPermittedToGetUser(user))
                 .thenReturn(true);
 
         when(userRepository.findByEmail(email))
@@ -270,12 +205,16 @@ class UserServiceTest extends AbstractServiceTest {
     void getUserByEmailWithInsufficientAuthority() {
         String email = FAKER.lorem().sentence();
 
-        when(authenticationUtil.isUserAdmin())
-                .thenReturn(false);
+        User user = createUserByRole(Role.STUDENT);
 
+        when(userRepository.findByEmail(email))
+                .thenReturn(Optional.ofNullable(user));
+
+        when(authenticationUtil.isUserPermittedToGetUser(user))
+                .thenReturn(false);
         assertThatThrownBy(() -> userService.getUserByEmail(email))
                 .isInstanceOf(NotEnoughAuthorityException.class)
-                .hasMessage("You don't have the right to access this resource");
+                .hasMessage("You don't have the right retrieve this users information");
     }
 
 
