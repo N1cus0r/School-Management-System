@@ -1,19 +1,16 @@
 package com.example.schoolmanagementsystem.course;
 
 import com.example.schoolmanagementsystem.AbstractCourseRelatedServiceTest;
-import com.example.schoolmanagementsystem.AbstractServiceTest;
 import com.example.schoolmanagementsystem.auth.AuthenticationUtil;
+import com.example.schoolmanagementsystem.exception.CourseNameTakenException;
 import com.example.schoolmanagementsystem.exception.NotEnoughAuthorityException;
 import com.example.schoolmanagementsystem.exception.RequestValidationError;
 import com.example.schoolmanagementsystem.exception.ResourceNotFoundException;
-import com.example.schoolmanagementsystem.user.Gender;
 import com.example.schoolmanagementsystem.user.Role;
 import com.example.schoolmanagementsystem.user.User;
 import com.example.schoolmanagementsystem.user.UserRepository;
 import com.example.schoolmanagementsystem.util.UpdateUtil;
-import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,11 +18,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -423,6 +416,46 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
 
         assertThat(courseArgumentCaptor.getValue())
                 .isEqualTo(expectedCourse);
+    }
+
+    @Test
+    void updateCourseWithTakenName() {
+        when(authenticationUtil.isUserStudent())
+                .thenReturn(false);
+
+        Long userId = FAKER.number().randomNumber();
+
+        Long courseId = FAKER.number().randomNumber();
+
+        User admin = createUserByRole(Role.ADMIN);
+
+        User teacher = createUserByRole(Role.TEACHER);
+
+        Course course = getCourseWithTeacher(teacher);
+
+        UpdateCourseRequest updateCourseRequest = getUpdateCourseRequest();
+
+        when(authenticationUtil.getRequestUser())
+                .thenReturn(admin);
+
+        when(authenticationUtil.isUserAdmin())
+                .thenReturn(true);
+
+        when(updateUtil.isFieldNullOrWithoutChange(any(), any()))
+                .thenReturn(false);
+
+        when(userRepository.findById(userId))
+                .thenReturn(Optional.of(teacher));
+
+        when(courseRepository.findById(courseId))
+                .thenReturn(Optional.of(course));
+
+        when(courseRepository.existsByName(updateCourseRequest.name()))
+                .thenReturn(true);
+
+        assertThatThrownBy(() -> courseService.updateTeacherCourse(courseId, updateCourseRequest))
+                .isInstanceOf(CourseNameTakenException.class)
+                .hasMessage("Provided name is already in use");
     }
 
     @Test

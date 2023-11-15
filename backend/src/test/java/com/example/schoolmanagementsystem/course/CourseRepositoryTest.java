@@ -1,13 +1,9 @@
 package com.example.schoolmanagementsystem.course;
 
 import com.example.schoolmanagementsystem.AbstractRepositoryTest;
-import com.example.schoolmanagementsystem.user.Gender;
 import com.example.schoolmanagementsystem.user.Role;
 import com.example.schoolmanagementsystem.user.User;
-import com.example.schoolmanagementsystem.user.UserRepository;
-import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -157,6 +153,7 @@ class CourseRepositoryTest extends AbstractRepositoryTest {
 
         assertThat(isStudentAssignedToCourse).isTrue();
     }
+
     @Test
     void existsByIdAndStudentsIdShouldReturnFalse() {
         Long unexistingCourseId = FAKER.number().randomNumber();
@@ -168,5 +165,27 @@ class CourseRepositoryTest extends AbstractRepositoryTest {
                         unexistingCourseId, unexistingStudentId);
 
         assertThat(isStudentAssignedToCourse).isFalse();
+    }
+
+    @Test
+    void existsByNameShouldReturnTrue() {
+        User teacher = createUserByRole(Role.TEACHER);
+
+        Course course = createCourseForTeacher(teacher);
+
+        boolean existsByName =
+                courseRepository.existsByName(course.getName());
+
+        assertThat(existsByName).isTrue();
+    }
+
+    @Test
+    void existsByNameShouldReturnFalse() {
+        String unexistingCourseName = FAKER.lorem().sentence();
+
+        boolean existsByName =
+                courseRepository.existsByName(unexistingCourseName);
+
+        assertThat(existsByName).isFalse();
     }
 }
