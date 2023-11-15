@@ -8,5 +8,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GradeRepository extends JpaRepository<Grade, Long> {
     Page<Grade> findByCourseStudentsId(Long studentId, Pageable pageable);
+
     Page<Grade> findByCourseTeacherId(Long teacherId, Pageable pageable);
+
+    Page<Grade> findByCourseId(Long courseId, Pageable pageable);
 }

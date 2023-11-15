@@ -139,4 +139,11 @@ public class AttendanceService extends CourseDependentEntityService {
 
         attendanceRepository.delete(attendance);
     }
+
+    public List<AttendanceDTO> getByCourseId(Long courseId, Pageable pageable) {
+        return attendanceRepository.findByCourseId(courseId, pageable).getContent()
+                .stream()
+                .map(attendanceDTOMapper)
+                .collect(Collectors.toList());
+    }
 }

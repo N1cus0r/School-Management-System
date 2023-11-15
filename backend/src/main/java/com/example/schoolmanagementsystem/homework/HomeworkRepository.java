@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface HomeworkRepository extends JpaRepository<Homework, Long> {
     Page<Homework> findByCourseStudentsId(Long studentId, Pageable pageable);
     Page<Homework> findByCourseTeacherId(Long teacherId, Pageable pageable);
+    Page<Homework> findByCourseId(Long courseId, Pageable pageable);
 }

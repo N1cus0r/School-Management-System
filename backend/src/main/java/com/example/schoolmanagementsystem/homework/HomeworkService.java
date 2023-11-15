@@ -19,10 +19,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 @Service
 public class HomeworkService extends CourseDependentEntityService {
     private final HomeworkRepository homeworkRepository;
     private final HomeworkDTOMapper homeworkDTOMapper;
+
     public HomeworkService(CourseRepository courseRepository, AuthenticationUtil authenticationUtil, UpdateUtil updateUtil, HomeworkRepository homeworkRepository, HomeworkDTOMapper homeworkDTOMapper) {
         super(courseRepository, authenticationUtil, updateUtil);
         this.homeworkRepository = homeworkRepository;
@@ -121,5 +123,12 @@ public class HomeworkService extends CourseDependentEntityService {
         }
 
         homeworkRepository.delete(homework);
+    }
+
+    public List<HomeworkDTO> getByCourseId(Long courseId, Pageable pageable) {
+        return homeworkRepository.findByCourseId(courseId, pageable).getContent()
+                .stream()
+                .map(homeworkDTOMapper)
+                .collect(Collectors.toList());
     }
 }

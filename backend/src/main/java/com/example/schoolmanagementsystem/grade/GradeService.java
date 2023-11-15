@@ -134,4 +134,11 @@ public class GradeService extends CourseDependentEntityService {
 
         gradeRepository.delete(grade);
     }
+
+    public List<GradeDTO> getByCourseId(Long courseId, Pageable pageable) {
+        return gradeRepository.findByCourseId(courseId, pageable).getContent()
+                .stream()
+                .map(gradeDTOMapper)
+                .collect(Collectors.toList());
+    }
 }

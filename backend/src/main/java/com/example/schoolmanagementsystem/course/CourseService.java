@@ -1,9 +1,19 @@
 package com.example.schoolmanagementsystem.course;
 
+import com.example.schoolmanagementsystem.attendance.AttendanceDTO;
+import com.example.schoolmanagementsystem.attendance.AttendanceService;
 import com.example.schoolmanagementsystem.auth.AuthenticationUtil;
+import com.example.schoolmanagementsystem.comment.CommentDTO;
+import com.example.schoolmanagementsystem.comment.CommentService;
+import com.example.schoolmanagementsystem.exception.CourseNameTakenException;
 import com.example.schoolmanagementsystem.exception.NotEnoughAuthorityException;
 import com.example.schoolmanagementsystem.exception.RequestValidationError;
 import com.example.schoolmanagementsystem.exception.ResourceNotFoundException;
+import com.example.schoolmanagementsystem.grade.GradeDTO;
+import com.example.schoolmanagementsystem.grade.GradeService;
+import com.example.schoolmanagementsystem.homework.HomeworkDTO;
+import com.example.schoolmanagementsystem.homework.HomeworkRepository;
+import com.example.schoolmanagementsystem.homework.HomeworkService;
 import com.example.schoolmanagementsystem.user.Role;
 import com.example.schoolmanagementsystem.user.User;
 import com.example.schoolmanagementsystem.user.UserRepository;
@@ -20,6 +30,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CourseService {
+    private final HomeworkService homeworkService;
+    private final GradeService gradeService;
+    private final AttendanceService attendanceService;
+    private final CommentService commentService;
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
     private final CourseDTOMapper courseDTOMapper;
@@ -137,6 +151,12 @@ public class CourseService {
         boolean changes = false;
 
         if (!updateUtil.isFieldNullOrWithoutChange(course.getName(), updateCourseRequest.name())) {
+            if (courseRepository.existsByName(updateCourseRequest.name())) {
+                throw new CourseNameTakenException(
+                        "Provided name is already in use"
+                );
+            }
+
             changes = true;
             course.setName(updateCourseRequest.name());
         }
@@ -205,5 +225,49 @@ public class CourseService {
         userRepository.save(student);
     }
 
+    private void validateCourseByIdAndOwner(Long courseId) {
+        if (authenticationUtil.isUserStudent()) {
+            throw new NotEnoughAuthorityException("You don't have the right use this service");
+        }
 
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Course with id [%s] does not exist".formatted(courseId)));
+
+        if (!(course.getTeacher().equals(authenticationUtil.getRequestUser()) || authenticationUtil.isUserAdmin())) {
+            throw new NotEnoughAuthorityException("You don't have the right to access this information");
+        }
+    }
+
+    public List<HomeworkDTO> getCourseHomeworks(Long courseId, int pageCount, int pageSize) {
+        validateCourseByIdAndOwner(courseId);
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        return homeworkService.getByCourseId(courseId, pageable);
+    }
+
+    public List<GradeDTO> getCourseGrades(Long courseId, int pageCount, int pageSize) {
+        validateCourseByIdAndOwner(courseId);
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        return gradeService.getByCourseId(courseId, pageable);
+    }
+
+    public List<AttendanceDTO> getCourseAttendances(Long courseId, int pageCount, int pageSize) {
+        validateCourseByIdAndOwner(courseId);
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        return attendanceService.getByCourseId(courseId, pageable);
+    }
+
+    public List<CommentDTO> getCourseComments(Long courseId, int pageCount, int pageSize) {
+        validateCourseByIdAndOwner(courseId);
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        return commentService.getByCourseId(courseId, pageable);
+    }
 }

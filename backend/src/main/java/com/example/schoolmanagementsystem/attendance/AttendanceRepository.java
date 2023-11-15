@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     Page<Attendance> findByCourseStudentsId(Long studentId, Pageable pageable);
     Page<Attendance> findByCourseTeacherId(Long teacherId, Pageable pageable);
+    Page<Attendance> findByCourseId(Long courseId, Pageable pageable);
 }
 
 

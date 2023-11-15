@@ -131,4 +131,11 @@ public class CommentService extends CourseDependentEntityService {
 
         commentRepository.delete(comment);
     }
+
+    public List<CommentDTO> getByCourseId(Long courseId, Pageable pageable) {
+        return commentRepository.findByCourseId(courseId, pageable).getContent()
+                .stream()
+                .map(commentDTOMapper)
+                .collect(Collectors.toList());
+    }
 }

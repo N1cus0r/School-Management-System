@@ -1,5 +1,9 @@
 package com.example.schoolmanagementsystem.course;
 
+import com.example.schoolmanagementsystem.attendance.AttendanceDTO;
+import com.example.schoolmanagementsystem.comment.CommentDTO;
+import com.example.schoolmanagementsystem.grade.GradeDTO;
+import com.example.schoolmanagementsystem.homework.HomeworkDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CourseController {
     private final CourseService courseService;
+
     @GetMapping("byName/{name}")
     public CourseDTO getCourseByName(
             @PathVariable("name") String name
@@ -63,5 +68,41 @@ public class CourseController {
             @PathVariable("studentId") Long studentId
     ) {
         courseService.removeStudentFromCourse(courseId, studentId);
+    }
+
+    @GetMapping("{courseId}/homeworks")
+    public List<HomeworkDTO> getCourseHomeworks(
+            @PathVariable("courseId") Long courseId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size
+    ) {
+        return courseService.getCourseHomeworks(courseId, page, size);
+    }
+
+    @GetMapping("{courseId}/grades")
+    public List<GradeDTO> getCourseGrades(
+            @PathVariable("courseId") Long courseId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size
+    ) {
+        return courseService.getCourseGrades(courseId, page, size);
+    }
+
+    @GetMapping("{courseId}/attendances")
+    public List<AttendanceDTO> getCourseAttendances(
+            @PathVariable("courseId") Long courseId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size
+    ) {
+        return courseService.getCourseAttendances(courseId, page, size);
+    }
+
+    @GetMapping("{courseId}/comments")
+    public List<CommentDTO> getCourseComments(
+            @PathVariable("courseId") Long courseId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size
+    ) {
+        return courseService.getCourseComments(courseId, page, size);
     }
 }
