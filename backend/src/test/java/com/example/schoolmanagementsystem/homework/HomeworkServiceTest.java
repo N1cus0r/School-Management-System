@@ -7,13 +7,10 @@ import com.example.schoolmanagementsystem.course.CourseRepository;
 import com.example.schoolmanagementsystem.exception.NotEnoughAuthorityException;
 import com.example.schoolmanagementsystem.exception.RequestValidationError;
 import com.example.schoolmanagementsystem.exception.ResourceNotFoundException;
-import com.example.schoolmanagementsystem.user.Gender;
 import com.example.schoolmanagementsystem.user.Role;
 import com.example.schoolmanagementsystem.user.User;
 import com.example.schoolmanagementsystem.util.UpdateUtil;
-import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,11 +18,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -80,7 +74,7 @@ class HomeworkServiceTest extends AbstractCourseRelatedServiceTest {
 
         User admin = createUserByRole(Role.ADMIN);
 
-        User teacher = createUserByRole(Role.ADMIN);
+        User teacher = createUserByRole(Role.TEACHER);
 
         Course course = createCourseForTeacher(teacher);
 
@@ -605,8 +599,6 @@ class HomeworkServiceTest extends AbstractCourseRelatedServiceTest {
     void deleteUnexistingHomework() {
         User teacher = createUserByRole(Role.TEACHER);
 
-        Course course = createCourseForTeacher(teacher);
-
         when(authenticationUtil.isUserStudent())
                 .thenReturn(false);
 
@@ -662,5 +654,31 @@ class HomeworkServiceTest extends AbstractCourseRelatedServiceTest {
         assertThatThrownBy(() -> homeworkService.deleteHomeworkForCourse(homeworkId))
                 .isInstanceOf(NotEnoughAuthorityException.class)
                 .hasMessage("You don't have the right use this service");
+    }
+
+    @Test
+    void getByCourseId() {
+        int pageCount = FAKER.number().numberBetween(1, 10);
+        int pageSize = FAKER.number().numberBetween(1, 10);
+
+        User teacher = createUserByRole(Role.TEACHER);
+
+        Course course = createCourseForTeacher(teacher);
+
+        List<Homework> homeworks = List.of(
+                createHomeworkForCourse(course),
+                createHomeworkForCourse(course)
+        );
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        when(homeworkRepository.findByCourseId(course.getId(), pageable))
+                .thenReturn(new PageImpl<>(homeworks, pageable, homeworks.size()));
+
+        List<HomeworkDTO> resultHomeWorks =
+                homeworkService.getByCourseId(course.getId(), pageable);
+
+        assertThat(resultHomeWorks)
+                .containsExactlyElementsOf(homeworks.stream().map(homeworkDTOMapper).collect(Collectors.toList()));
     }
 }

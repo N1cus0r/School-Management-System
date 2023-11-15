@@ -78,4 +78,28 @@ class CommentRepositoryTest extends AbstractCourseDependentEntityRepositoryTest 
         assertThat(resultCommentPage.getContent())
                 .contains(comment);
     }
+
+    @Test
+    void findByCourseId() {
+        User teacher = createUserByRole(Role.TEACHER);
+
+        User student = createUserByRole(Role.STUDENT);
+
+        Set<User> students = new HashSet<>();
+
+        students.add(student);
+
+        Course course = createCourseForTeacherWithStudents(teacher, students);
+
+        Comment comment = createCommentForStudent(student, course);
+
+        Pageable page = PageRequest.of(0, 1);
+
+        Page<Comment> resultCommentPage = commentRepository.findByCourseId(course.getId(), page);
+
+        assertThat(resultCommentPage.getContent())
+                .contains(comment);
+    }
+
+
 }

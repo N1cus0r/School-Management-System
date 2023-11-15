@@ -765,4 +765,32 @@ class AttendanceServiceTest extends AbstractCourseRelatedServiceTest {
                 .isInstanceOf(NotEnoughAuthorityException.class)
                 .hasMessage("You don't have the right use this service");
     }
+
+    @Test
+    void getByCourseId() {
+        int pageCount = FAKER.number().numberBetween(1, 10);
+        int pageSize = FAKER.number().numberBetween(1, 10);
+
+        User teacher = createUserByRole(Role.ADMIN);
+
+        User student = createUserByRole(Role.STUDENT);
+
+        Course course = createCourseForTeacher(teacher);
+
+        List<Attendance> attendances = List.of(
+                createAttendanceForStudent(student, course),
+                createAttendanceForStudent(student, course)
+        );
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        when(attendanceRepository.findByCourseId(course.getId(), pageable))
+                .thenReturn(new PageImpl<>(attendances, pageable, attendances.size()));
+
+        List<AttendanceDTO> resultAttendances =
+                attendanceService.getByCourseId(course.getId(), pageable);
+
+        assertThat(resultAttendances)
+                .containsExactlyElementsOf(attendances.stream().map(attendanceDTOMapper).collect(Collectors.toList()));
+    }
 }

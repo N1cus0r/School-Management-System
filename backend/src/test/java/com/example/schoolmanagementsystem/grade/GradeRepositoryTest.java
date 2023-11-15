@@ -68,13 +68,35 @@ class GradeRepositoryTest extends AbstractCourseDependentEntityRepositoryTest {
 
         Course course = createCourseForTeacherWithStudents(teacher, students);
 
-        Grade comment = createGradeForStudent(student, course);
+        Grade grade = createGradeForStudent(student, course);
 
         Pageable page = PageRequest.of(0, 1);
 
         Page<Grade> resultGradePage = gradeRepository.findByCourseTeacherId(teacher.getId(), page);
 
         assertThat(resultGradePage.getContent())
-                .contains(comment);
+                .contains(grade);
+    }
+
+    @Test
+    void findByCourseId() {
+        User teacher = createUserByRole(Role.TEACHER);
+
+        User student = createUserByRole(Role.STUDENT);
+
+        Set<User> students = new HashSet<>();
+
+        students.add(student);
+
+        Course course = createCourseForTeacherWithStudents(teacher, students);
+
+        Grade grade = createGradeForStudent(student, course);
+
+        Pageable page = PageRequest.of(0, 1);
+
+        Page<Grade> resultGradePage = gradeRepository.findByCourseId(course.getId(), page);
+
+        assertThat(resultGradePage.getContent())
+                .contains(grade);
     }
 }

@@ -84,4 +84,26 @@ class AttendanceRepositoryTest extends AbstractCourseDependentEntityRepositoryTe
         assertThat(resultAttendancePage.getContent())
                 .contains(attendance);
     }
+
+    @Test
+    void findByCourseId() {
+        User teacher = createUserByRole(Role.TEACHER);
+
+        User student = createUserByRole(Role.STUDENT);
+
+        Set<User> students = new HashSet<>();
+
+        students.add(student);
+
+        Course course = createCourseForTeacherWithStudents(teacher, students);
+
+        Attendance attendance = createAttendanceForStudent(student, course);
+
+        Pageable page = PageRequest.of(0, 1);
+
+        Page<Attendance> resultAttendancePage = attendanceRepository.findByCourseId(course.getId(), page);
+
+        assertThat(resultAttendancePage.getContent())
+                .contains(attendance);
+    }
 }

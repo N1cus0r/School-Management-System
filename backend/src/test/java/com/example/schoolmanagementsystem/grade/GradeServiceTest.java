@@ -757,4 +757,32 @@ class GradeServiceTest extends AbstractCourseRelatedServiceTest {
                 .isInstanceOf(NotEnoughAuthorityException.class)
                 .hasMessage("You don't have the right use this service");
     }
+
+    @Test
+    void getByCourseId() {
+        int pageCount = FAKER.number().numberBetween(1, 10);
+        int pageSize = FAKER.number().numberBetween(1, 10);
+
+        User teacher = createUserByRole(Role.ADMIN);
+
+        User student = createUserByRole(Role.STUDENT);
+
+        Course course = createCourseForTeacher(teacher);
+
+        List<Grade> grades = List.of(
+                createGradeForStudent(student, course),
+                createGradeForStudent(student, course)
+        );
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        when(gradeRepository.findByCourseId(course.getId(), pageable))
+                .thenReturn(new PageImpl<>(grades, pageable, grades.size()));
+
+        List<GradeDTO> resultComments =
+                gradeService.getByCourseId(course.getId(), pageable);
+
+        assertThat(resultComments)
+                .containsExactlyElementsOf(grades.stream().map(gradeDTOMapper).collect(Collectors.toList()));
+    }
 }

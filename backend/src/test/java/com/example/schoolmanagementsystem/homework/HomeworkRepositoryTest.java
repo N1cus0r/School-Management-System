@@ -72,4 +72,20 @@ class HomeworkRepositoryTest extends AbstractCourseDependentEntityRepositoryTest
         assertThat(resultHomeworkPage.getContent())
                 .contains(homework);
     }
+
+    @Test
+    void findByCourseId() {
+        User teacher = createUserByRole(Role.TEACHER);
+
+        Course course = createCourseForTeacher(teacher);
+
+        Homework homework = createHomeworkForCourse(course);
+
+        Pageable page = PageRequest.of(0, 1);
+
+        Page<Homework> resultHomeworkPage = homeworkRepository.findByCourseId(course.getId(), page);
+
+        assertThat(resultHomeworkPage.getContent())
+                .contains(homework);
+    }
 }
