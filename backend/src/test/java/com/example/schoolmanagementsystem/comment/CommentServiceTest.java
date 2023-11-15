@@ -753,4 +753,32 @@ public class CommentServiceTest extends AbstractCourseRelatedServiceTest {
                 .isInstanceOf(NotEnoughAuthorityException.class)
                 .hasMessage("You don't have the right use this service");
     }
+
+    @Test
+    void getByCourseId() {
+        int pageCount = FAKER.number().numberBetween(1, 10);
+        int pageSize = FAKER.number().numberBetween(1, 10);
+
+        User teacher = createUserByRole(Role.ADMIN);
+
+        User student = createUserByRole(Role.STUDENT);
+
+        Course course = createCourseForTeacher(teacher);
+
+        List<Comment> comments = List.of(
+                createCommentForStudent(student, course),
+                createCommentForStudent(student, course)
+        );
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        when(commentRepository.findByCourseId(course.getId(), pageable))
+                .thenReturn(new PageImpl<>(comments, pageable, comments.size()));
+
+        List<CommentDTO> resultComments =
+                commentService.getByCourseId(course.getId(), pageable);
+
+        assertThat(resultComments)
+                .containsExactlyElementsOf(comments.stream().map(commentDTOMapper).collect(Collectors.toList()));
+    }
 }
