@@ -1,8 +1,7 @@
 package com.example.schoolmanagementsystem.user;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import com.example.schoolmanagementsystem.util.annotations.NullableNotBlank;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
@@ -18,7 +17,9 @@ public record UserRegistrationRequest(
         String fullName,
         @NotNull(message = "gender name must not be empty")
         Gender gender,
+
+        @NullableNotBlank
         String mobilePhone,
-        @NotNull(message = "date of birth name must not be empty")
         LocalDate dateOfBirth
-) {}
+) {
+}
