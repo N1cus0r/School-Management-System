@@ -1,11 +1,15 @@
 package com.example.schoolmanagementsystem.course;
 
 import com.example.schoolmanagementsystem.AbstractCourseRelatedServiceTest;
+import com.example.schoolmanagementsystem.attendance.AttendanceService;
 import com.example.schoolmanagementsystem.auth.AuthenticationUtil;
+import com.example.schoolmanagementsystem.comment.CommentService;
 import com.example.schoolmanagementsystem.exception.CourseNameTakenException;
 import com.example.schoolmanagementsystem.exception.NotEnoughAuthorityException;
 import com.example.schoolmanagementsystem.exception.RequestValidationError;
 import com.example.schoolmanagementsystem.exception.ResourceNotFoundException;
+import com.example.schoolmanagementsystem.grade.GradeService;
+import com.example.schoolmanagementsystem.homework.HomeworkService;
 import com.example.schoolmanagementsystem.user.Role;
 import com.example.schoolmanagementsystem.user.User;
 import com.example.schoolmanagementsystem.user.UserRepository;
@@ -41,6 +45,14 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
     private AuthenticationUtil authenticationUtil;
     @MockBean
     private UpdateUtil updateUtil;
+    @MockBean
+    private HomeworkService homeworkService;
+    @MockBean
+    private GradeService gradeService;
+    @MockBean
+    private AttendanceService attendanceService;
+    @MockBean
+    private CommentService commentService;
     @Autowired
     private CourseService courseService;
 
@@ -496,7 +508,6 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
     }
 
 
-
     @Test
     void updateUnexistingCourse() {
         when(authenticationUtil.isUserStudent())
@@ -526,6 +537,7 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
                 .hasMessage("Course with id [%s] does not exist".formatted(courseId));
 
     }
+
     @Test
     void updateUserCourseByAnotherTeacher() {
         when(authenticationUtil.isUserStudent())
@@ -794,7 +806,7 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
         when(userRepository.findById(studentId))
                 .thenReturn(Optional.of(teacher));
 
-        assertThatThrownBy(() -> courseService.addStudentToCourse( courseId, studentId))
+        assertThatThrownBy(() -> courseService.addStudentToCourse(courseId, studentId))
                 .isInstanceOf(RequestValidationError.class)
                 .hasMessage("You can't add courses to user with id [%s]".formatted(studentId));
     }
@@ -824,7 +836,7 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
         when(userRepository.findById(teacherId))
                 .thenReturn(Optional.of(teacher));
 
-        assertThatThrownBy(() -> courseService.addStudentToCourse( courseId, studentId))
+        assertThatThrownBy(() -> courseService.addStudentToCourse(courseId, studentId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Course with id [%s] does not exist".formatted(courseId));
     }
@@ -858,7 +870,7 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
         when(courseRepository.findById(courseId))
                 .thenReturn(Optional.of(course));
 
-        assertThatThrownBy(() -> courseService.addStudentToCourse( courseId, studentId))
+        assertThatThrownBy(() -> courseService.addStudentToCourse(courseId, studentId))
                 .isInstanceOf(NotEnoughAuthorityException.class)
                 .hasMessage("You don't have the right to add students to this course");
     }
@@ -875,7 +887,7 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
         when(authenticationUtil.isUserStudent())
                 .thenReturn(true);
 
-        assertThatThrownBy(() -> courseService.addStudentToCourse( courseId, studentId))
+        assertThatThrownBy(() -> courseService.addStudentToCourse(courseId, studentId))
                 .isInstanceOf(NotEnoughAuthorityException.class)
                 .hasMessage("You don't have the right use this service");
     }
@@ -917,7 +929,7 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
         ArgumentCaptor<User> userArgumentCaptor =
                 ArgumentCaptor.forClass(User.class);
 
-        courseService.removeStudentFromCourse( courseId, studentId);
+        courseService.removeStudentFromCourse(courseId, studentId);
 
         verify(userRepository).save(userArgumentCaptor.capture());
 
@@ -949,7 +961,7 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
         when(userRepository.findById(teacherId))
                 .thenReturn(Optional.of(teacher));
 
-        assertThatThrownBy(() -> courseService.removeStudentFromCourse( courseId, studentId))
+        assertThatThrownBy(() -> courseService.removeStudentFromCourse(courseId, studentId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Course with id [%s] does not exist".formatted(courseId));
     }
@@ -983,7 +995,7 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
         when(courseRepository.findById(courseId))
                 .thenReturn(Optional.of(course));
 
-        assertThatThrownBy(() -> courseService.removeStudentFromCourse( courseId, studentId))
+        assertThatThrownBy(() -> courseService.removeStudentFromCourse(courseId, studentId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("User with id [%s] does not exist".formatted(studentId));
     }
@@ -1020,7 +1032,7 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
         when(userRepository.findById(studentId))
                 .thenReturn(Optional.of(teacher));
 
-        assertThatThrownBy(() -> courseService.removeStudentFromCourse( courseId, studentId))
+        assertThatThrownBy(() -> courseService.removeStudentFromCourse(courseId, studentId))
                 .isInstanceOf(RequestValidationError.class)
                 .hasMessage("You can't add courses to user with id [%s]".formatted(studentId));
     }
@@ -1054,7 +1066,7 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
         when(courseRepository.findById(courseId))
                 .thenReturn(Optional.of(course));
 
-        assertThatThrownBy(() -> courseService.removeStudentFromCourse( courseId, studentId))
+        assertThatThrownBy(() -> courseService.removeStudentFromCourse(courseId, studentId))
                 .isInstanceOf(NotEnoughAuthorityException.class)
                 .hasMessage("You don't have the right to remove students from this course");
     }
@@ -1071,8 +1083,109 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
         when(authenticationUtil.isUserStudent())
                 .thenReturn(true);
 
-        assertThatThrownBy(() -> courseService.removeStudentFromCourse( courseId, studentId))
+        assertThatThrownBy(() -> courseService.removeStudentFromCourse(courseId, studentId))
                 .isInstanceOf(NotEnoughAuthorityException.class)
                 .hasMessage("You don't have the right use this service");
     }
+
+    @Test
+    void getCourseHomeworks() {
+        User teacher = createUserByRole(Role.TEACHER);
+
+        Course course = createCourseForTeacher(teacher);
+
+        when(authenticationUtil.isUserStudent())
+                .thenReturn(false);
+
+        when(courseRepository.findById(course.getId()))
+                .thenReturn(Optional.of(course));
+
+        when(authenticationUtil.isUserAdmin())
+                .thenReturn(true);
+
+        int pageCount = FAKER.number().randomDigitNotZero();
+        int pageSize = FAKER.number().randomDigitNotZero();
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        courseService.getCourseHomeworks(course.getId(), pageCount, pageSize);
+
+        verify(homeworkService).getByCourseId(course.getId(), pageable);
+    }
+
+    @Test
+    void getCourseGrades() {
+        User teacher = createUserByRole(Role.TEACHER);
+
+        Course course = createCourseForTeacher(teacher);
+
+        when(authenticationUtil.isUserStudent())
+                .thenReturn(false);
+
+        when(courseRepository.findById(course.getId()))
+                .thenReturn(Optional.of(course));
+
+        when(authenticationUtil.isUserAdmin())
+                .thenReturn(true);
+
+        int pageCount = FAKER.number().randomDigitNotZero();
+        int pageSize = FAKER.number().randomDigitNotZero();
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        courseService.getCourseGrades(course.getId(), pageCount, pageSize);
+
+        verify(gradeService).getByCourseId(course.getId(), pageable);
+    }
+
+    @Test
+    void getCourseAttendances() {
+        User teacher = createUserByRole(Role.TEACHER);
+
+        Course course = createCourseForTeacher(teacher);
+
+        when(authenticationUtil.isUserStudent())
+                .thenReturn(false);
+
+        when(courseRepository.findById(course.getId()))
+                .thenReturn(Optional.of(course));
+
+        when(authenticationUtil.isUserAdmin())
+                .thenReturn(true);
+
+        int pageCount = FAKER.number().randomDigitNotZero();
+        int pageSize = FAKER.number().randomDigitNotZero();
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        courseService.getCourseAttendances(course.getId(), pageCount, pageSize);
+
+        verify(attendanceService).getByCourseId(course.getId(), pageable);
+    }
+
+    @Test
+    void getCourseComments() {
+        User teacher = createUserByRole(Role.TEACHER);
+
+        Course course = createCourseForTeacher(teacher);
+
+        when(authenticationUtil.isUserStudent())
+                .thenReturn(false);
+
+        when(courseRepository.findById(course.getId()))
+                .thenReturn(Optional.of(course));
+
+        when(authenticationUtil.isUserAdmin())
+                .thenReturn(true);
+
+        int pageCount = FAKER.number().randomDigitNotZero();
+        int pageSize = FAKER.number().randomDigitNotZero();
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        courseService.getCourseComments(course.getId(), pageCount, pageSize);
+
+        verify(commentService).getByCourseId(course.getId(), pageable);
+    }
+
 }
