@@ -1188,4 +1188,61 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
         verify(commentService).getByCourseId(course.getId(), pageable);
     }
 
+        @Test
+    void getCourseById() {
+        User teacher = createUserByRole(Role.TEACHER);
+
+        Course course = createCourseForTeacher(teacher);
+
+        when(authenticationUtil.isUserAdmin())
+                .thenReturn(true);
+
+        when(courseRepository.findById(course.getId()))
+                .thenReturn(Optional.ofNullable(course));
+
+        CourseDTO resultCourse = courseService.getCourseById(course.getId());
+
+        assertThat(resultCourse)
+                .isEqualTo(courseDTOMapper.apply(course));
+    }
+    @Test
+    void getCourseByIdByAnotherTeacher() {
+        User teacher = createUserByRole(Role.TEACHER);
+
+        User anotherTeacher = createUserByRole(Role.TEACHER);
+
+        Course course = createCourseForTeacher(teacher);
+
+        when(courseRepository.findById(course.getId()))
+                .thenReturn(Optional.ofNullable(course));
+
+        when(authenticationUtil.getRequestUser())
+                .thenReturn(anotherTeacher);
+
+        assertThatThrownBy(()->courseService.getCourseById(course.getId()))
+                .isInstanceOf(NotEnoughAuthorityException.class)
+                .hasMessage("You don't have the right to access this information");
+    }
+    @Test
+    void getUnexistingCourseById() {
+        Long unexistingCourseId = FAKER.number().randomNumber();
+
+        when(authenticationUtil.isUserStudent())
+                .thenReturn(false);
+
+        assertThatThrownBy(()->courseService.getCourseById(unexistingCourseId))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Course with id [%s] does not exist".formatted(unexistingCourseId));
+    }
+    @Test
+    void getCourseByIdWithInsufficientAuthority() {
+        Long courseId = FAKER.number().randomNumber();
+
+        when(authenticationUtil.isUserStudent())
+                .thenReturn(true);
+
+        assertThatThrownBy(()->courseService.getCourseById(courseId))
+                .isInstanceOf(NotEnoughAuthorityException.class)
+                .hasMessage("You don't have the right use this service");
+    }
 }
