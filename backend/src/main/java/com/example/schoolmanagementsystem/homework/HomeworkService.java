@@ -10,8 +10,6 @@ import com.example.schoolmanagementsystem.exception.ResourceNotFoundException;
 import com.example.schoolmanagementsystem.user.Role;
 import com.example.schoolmanagementsystem.user.User;
 import com.example.schoolmanagementsystem.util.UpdateUtil;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
