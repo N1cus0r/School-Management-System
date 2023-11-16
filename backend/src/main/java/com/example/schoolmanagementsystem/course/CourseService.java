@@ -270,4 +270,20 @@ public class CourseService {
 
         return commentService.getByCourseId(courseId, pageable);
     }
+
+    public CourseDTO getCourseById(Long courseId) {
+        if (authenticationUtil.isUserStudent()) {
+            throw new NotEnoughAuthorityException("You don't have the right use this service");
+        }
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Course with id [%s] does not exist".formatted(courseId)));
+
+        if (!(course.getTeacher().equals(authenticationUtil.getRequestUser()) || authenticationUtil.isUserAdmin())) {
+            throw new NotEnoughAuthorityException("You don't have the right to access this information");
+        }
+
+        return courseDTOMapper.apply(course);
+    }
 }

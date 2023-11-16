@@ -70,6 +70,11 @@ public class CourseController {
         courseService.removeStudentFromCourse(courseId, studentId);
     }
 
+    @GetMapping("{courseId}")
+    public CourseDTO getCourseById(@PathVariable("courseId") Long courseId) {
+        return courseService.getCourseById(courseId);
+    }
+
     @GetMapping("{courseId}/homeworks")
     public List<HomeworkDTO> getCourseHomeworks(
             @PathVariable("courseId") Long courseId,
