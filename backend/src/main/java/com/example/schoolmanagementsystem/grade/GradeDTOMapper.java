@@ -14,7 +14,8 @@ public class GradeDTOMapper implements Function<Grade, GradeDTO> {
                 grade.getText(),
                 grade.getDatePublished(),
                 grade.getCourse().getName(),
-                grade.getCourse().getTeacher().getFullName()
+                grade.getCourse().getTeacher().getFullName(),
+                grade.getStudent().getFullName()
         );
     }
 }

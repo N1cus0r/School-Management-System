@@ -7,6 +7,8 @@ import com.example.schoolmanagementsystem.course.CreateCourseRequest;
 import com.example.schoolmanagementsystem.grade.CreateGradeRequest;
 import com.example.schoolmanagementsystem.grade.GradeDTO;
 import com.example.schoolmanagementsystem.grade.UpdateGradeRequest;
+import com.example.schoolmanagementsystem.user.User;
+import com.example.schoolmanagementsystem.user.UserDTO;
 import com.example.schoolmanagementsystem.user.UserRegistrationRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -74,11 +76,11 @@ public class GradeUpdateIntegrationTest extends AbstractGradeIntegrationTest {
 
         CourseDTO courseDTO = getCourseByName(jwtToken, createCourseRequest.name());
 
-        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
+        UserDTO student = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
 
-        addStudentToCourseAndExpectOkStatus(jwtToken, courseDTO.id(), studentId);
+        addStudentToCourseAndExpectOkStatus(jwtToken, courseDTO.id(), student.id());
 
-        CreateGradeRequest createGradeRequest = getCreateGradeRequest(studentId, courseDTO.id());
+        CreateGradeRequest createGradeRequest = getCreateGradeRequest(student.id(), courseDTO.id());
 
         createGradeForStudentAndExpectOkStatus(jwtToken, createGradeRequest);
 
@@ -108,7 +110,8 @@ public class GradeUpdateIntegrationTest extends AbstractGradeIntegrationTest {
                 updateGradeRequest.text(),
                 gradeDatePublished,
                 courseDTO.name(),
-                courseDTO.teacherName()
+                courseDTO.teacherName(),
+                student.fullName()
         );
 
         assertThat(resultGrades).contains(expectedGrade);
@@ -136,11 +139,11 @@ public class GradeUpdateIntegrationTest extends AbstractGradeIntegrationTest {
 
         CourseDTO courseDTO = getCourseByName(jwtToken, createCourseRequest.name());
 
-        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
+        UserDTO student = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
 
-        addStudentToCourseAndExpectOkStatus(jwtToken, courseDTO.id(), studentId);
+        addStudentToCourseAndExpectOkStatus(jwtToken, courseDTO.id(), student.id());
 
-        CreateGradeRequest createGradeRequest = getCreateGradeRequest(studentId, courseDTO.id());
+        CreateGradeRequest createGradeRequest = getCreateGradeRequest(student.id(), courseDTO.id());
 
         createGradeForStudentAndExpectOkStatus(jwtToken, createGradeRequest);
 
@@ -178,7 +181,8 @@ public class GradeUpdateIntegrationTest extends AbstractGradeIntegrationTest {
                 updateGradeRequest.text(),
                 gradeDatePublished,
                 courseDTO.name(),
-                courseDTO.teacherName()
+                courseDTO.teacherName(),
+                student.fullName()
         );
 
         assertThat(resultGrades).contains(expectedGrade);
