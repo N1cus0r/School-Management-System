@@ -1,8 +1,11 @@
 package com.example.schoolmanagementsystem.user;
 
+import com.example.schoolmanagementsystem.AbstractCourseDependentEntityRepositoryTest;
 import com.example.schoolmanagementsystem.AbstractRepositoryTest;
 import com.example.schoolmanagementsystem.AbstractTestContainer;
 import com.example.schoolmanagementsystem.Main;
+import com.example.schoolmanagementsystem.course.Course;
+import com.example.schoolmanagementsystem.course.CourseRepository;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +16,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
 
-class UserRepositoryTest extends AbstractRepositoryTest {
+class UserRepositoryTest extends AbstractCourseDependentEntityRepositoryTest {
     @Autowired
     private UserRepository repository;
+    @Autowired
+    private CourseRepository courseRepository;
     private final Faker FAKER = new Faker();
 
     @Test
@@ -155,5 +163,39 @@ class UserRepositoryTest extends AbstractRepositoryTest {
         boolean existsByRole = repository.existsByRole(Role.STUDENT);
 
         assertThat(existsByRole).isFalse();
+    }
+
+    @Test
+    void findByCoursesId() {
+        int numberOfStudentsSatisfyingCondition = 5;
+        int numberOfStudentsNotSatisfyingCondition = 5;
+
+        Set<User> studentsTakingCourse = new HashSet<>();
+
+        for (int i = 0; i < numberOfStudentsSatisfyingCondition; i++) {
+            studentsTakingCourse.add(createUserByRole(Role.STUDENT));
+        }
+
+
+        for (int i = 0; i < numberOfStudentsNotSatisfyingCondition; i++) {
+            createUserByRole(Role.STUDENT);
+        }
+
+        Course course = createCourseForTeacherWithStudents(
+                createUserByRole(Role.TEACHER),
+                studentsTakingCourse
+        );
+
+        Pageable page = PageRequest.of(
+                0,
+                numberOfStudentsSatisfyingCondition + numberOfStudentsNotSatisfyingCondition);
+
+        Page<User> resultUserPage =
+                repository.findByCoursesId(
+                        course.getId(), page
+                );
+
+        assertThat(resultUserPage.getContent().size())
+                .isEqualTo(numberOfStudentsSatisfyingCondition);
     }
 }

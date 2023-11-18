@@ -1,11 +1,15 @@
 package com.example.schoolmanagementsystem.user;
 
+import com.example.schoolmanagementsystem.AbstractCourseRelatedServiceTest;
 import com.example.schoolmanagementsystem.AbstractServiceTest;
 import com.example.schoolmanagementsystem.auth.AuthenticationUtil;
+import com.example.schoolmanagementsystem.course.Course;
 import com.example.schoolmanagementsystem.exception.NotEnoughAuthorityException;
 import com.example.schoolmanagementsystem.exception.RequestValidationError;
 import com.example.schoolmanagementsystem.exception.ResourceNotFoundException;
 import com.example.schoolmanagementsystem.exception.UserEmailTakeException;
+import com.example.schoolmanagementsystem.homework.Homework;
+import com.example.schoolmanagementsystem.homework.HomeworkDTO;
 import com.example.schoolmanagementsystem.s3.S3Bucket;
 import com.example.schoolmanagementsystem.s3.S3Service;
 import com.example.schoolmanagementsystem.util.UpdateUtil;
@@ -38,7 +42,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = UserService.class)
-class UserServiceTest extends AbstractServiceTest {
+class UserServiceTest extends AbstractCourseRelatedServiceTest {
     @MockBean
     private UserRepository userRepository;
     @MockBean
@@ -690,5 +694,31 @@ class UserServiceTest extends AbstractServiceTest {
         assertThatThrownBy(() -> userService.getUserImage(userId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("User with id [%s] does not exist".formatted(userId));
+    }
+
+    @Test
+    void getByCourseId() {
+        int pageCount = FAKER.number().numberBetween(1, 10);
+        int pageSize = FAKER.number().numberBetween(1, 10);
+
+        User teacher = createUserByRole(Role.TEACHER);
+
+        Course course = createCourseForTeacher(teacher);
+
+        List<User> students = List.of(
+                createUserByRole(Role.STUDENT),
+                createUserByRole(Role.STUDENT)
+        );
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        when(userRepository.findByCoursesId(course.getId(), pageable))
+                .thenReturn(new PageImpl<>(students, pageable, students.size()));
+
+        List<UserDTO> resultStudents =
+                userService.getByCourseId(course.getId(), pageable);
+
+        assertThat(resultStudents)
+                .containsExactlyElementsOf(students.stream().map(userDTOMapper).collect(Collectors.toList()));
     }
 }

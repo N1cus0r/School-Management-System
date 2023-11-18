@@ -13,6 +13,7 @@ import com.example.schoolmanagementsystem.homework.HomeworkService;
 import com.example.schoolmanagementsystem.user.Role;
 import com.example.schoolmanagementsystem.user.User;
 import com.example.schoolmanagementsystem.user.UserRepository;
+import com.example.schoolmanagementsystem.user.UserService;
 import com.example.schoolmanagementsystem.util.UpdateUtil;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -53,6 +54,8 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
     private AttendanceService attendanceService;
     @MockBean
     private CommentService commentService;
+    @MockBean
+    private UserService userService;
     @Autowired
     private CourseService courseService;
 
@@ -1089,6 +1092,66 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
     }
 
     @Test
+    void getCourseById() {
+        User teacher = createUserByRole(Role.TEACHER);
+
+        Course course = createCourseForTeacher(teacher);
+
+        when(authenticationUtil.isUserAdmin())
+                .thenReturn(true);
+
+        when(courseRepository.findById(course.getId()))
+                .thenReturn(Optional.ofNullable(course));
+
+        CourseDTO resultCourse = courseService.getCourseById(course.getId());
+
+        assertThat(resultCourse)
+                .isEqualTo(courseDTOMapper.apply(course));
+    }
+
+    @Test
+    void getCourseByIdByAnotherTeacher() {
+        User teacher = createUserByRole(Role.TEACHER);
+
+        User anotherTeacher = createUserByRole(Role.TEACHER);
+
+        Course course = createCourseForTeacher(teacher);
+
+        when(courseRepository.findById(course.getId()))
+                .thenReturn(Optional.ofNullable(course));
+
+        when(authenticationUtil.getRequestUser())
+                .thenReturn(anotherTeacher);
+
+        assertThatThrownBy(()->courseService.getCourseById(course.getId()))
+                .isInstanceOf(NotEnoughAuthorityException.class)
+                .hasMessage("You don't have the right to access this information");
+    }
+
+    @Test
+    void getUnexistingCourseById() {
+        Long unexistingCourseId = FAKER.number().randomNumber();
+
+        when(authenticationUtil.isUserStudent())
+                .thenReturn(false);
+
+        assertThatThrownBy(()->courseService.getCourseById(unexistingCourseId))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Course with id [%s] does not exist".formatted(unexistingCourseId));
+    }
+
+    @Test
+    void getCourseByIdWithInsufficientAuthority() {
+        Long courseId = FAKER.number().randomNumber();
+
+        when(authenticationUtil.isUserStudent())
+                .thenReturn(true);
+
+        assertThatThrownBy(()->courseService.getCourseById(courseId))
+                .isInstanceOf(NotEnoughAuthorityException.class)
+                .hasMessage("You don't have the right use this service");
+    }
+    @Test
     void getCourseHomeworks() {
         User teacher = createUserByRole(Role.TEACHER);
 
@@ -1188,61 +1251,28 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
         verify(commentService).getByCourseId(course.getId(), pageable);
     }
 
-        @Test
-    void getCourseById() {
+    @Test
+    void getCourseStudents() {
         User teacher = createUserByRole(Role.TEACHER);
 
         Course course = createCourseForTeacher(teacher);
-
-        when(authenticationUtil.isUserAdmin())
-                .thenReturn(true);
-
-        when(courseRepository.findById(course.getId()))
-                .thenReturn(Optional.ofNullable(course));
-
-        CourseDTO resultCourse = courseService.getCourseById(course.getId());
-
-        assertThat(resultCourse)
-                .isEqualTo(courseDTOMapper.apply(course));
-    }
-    @Test
-    void getCourseByIdByAnotherTeacher() {
-        User teacher = createUserByRole(Role.TEACHER);
-
-        User anotherTeacher = createUserByRole(Role.TEACHER);
-
-        Course course = createCourseForTeacher(teacher);
-
-        when(courseRepository.findById(course.getId()))
-                .thenReturn(Optional.ofNullable(course));
-
-        when(authenticationUtil.getRequestUser())
-                .thenReturn(anotherTeacher);
-
-        assertThatThrownBy(()->courseService.getCourseById(course.getId()))
-                .isInstanceOf(NotEnoughAuthorityException.class)
-                .hasMessage("You don't have the right to access this information");
-    }
-    @Test
-    void getUnexistingCourseById() {
-        Long unexistingCourseId = FAKER.number().randomNumber();
 
         when(authenticationUtil.isUserStudent())
                 .thenReturn(false);
 
-        assertThatThrownBy(()->courseService.getCourseById(unexistingCourseId))
-                .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("Course with id [%s] does not exist".formatted(unexistingCourseId));
-    }
-    @Test
-    void getCourseByIdWithInsufficientAuthority() {
-        Long courseId = FAKER.number().randomNumber();
+        when(courseRepository.findById(course.getId()))
+                .thenReturn(Optional.of(course));
 
-        when(authenticationUtil.isUserStudent())
+        when(authenticationUtil.isUserAdmin())
                 .thenReturn(true);
 
-        assertThatThrownBy(()->courseService.getCourseById(courseId))
-                .isInstanceOf(NotEnoughAuthorityException.class)
-                .hasMessage("You don't have the right use this service");
+        int pageCount = FAKER.number().randomDigitNotZero();
+        int pageSize = FAKER.number().randomDigitNotZero();
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        courseService.getCourseStudents(course.getId(), pageCount, pageSize);
+
+        verify(userService).getByCourseId(course.getId(), pageable);
     }
 }
