@@ -1,6 +1,7 @@
 package com.example.schoolmanagementsystem.user;
 
 import com.example.schoolmanagementsystem.auth.AuthenticationUtil;
+import com.example.schoolmanagementsystem.comment.CommentDTO;
 import com.example.schoolmanagementsystem.exception.NotEnoughAuthorityException;
 import com.example.schoolmanagementsystem.exception.RequestValidationError;
 import com.example.schoolmanagementsystem.exception.ResourceNotFoundException;
@@ -56,6 +57,7 @@ public class UserService {
             createAdminUser();
         }
     }
+
     public void registerUser(UserRegistrationRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new UserEmailTakeException("Provided email is already in use");
@@ -243,5 +245,12 @@ public class UserService {
                 s3Bucket.getName(),
                 s3Bucket.PROFILE_IMAGE_PATH.formatted(userId, user.getProfileImageId())
         );
+    }
+
+    public List<UserDTO> getByCourseId(Long courseId, Pageable pageable) {
+        return userRepository.findByCoursesId(courseId, pageable).getContent()
+                .stream()
+                .map(userDTOMapper)
+                .collect(Collectors.toList());
     }
 }

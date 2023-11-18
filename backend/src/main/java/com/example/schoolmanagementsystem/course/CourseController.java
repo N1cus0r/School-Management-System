@@ -4,6 +4,7 @@ import com.example.schoolmanagementsystem.attendance.AttendanceDTO;
 import com.example.schoolmanagementsystem.comment.CommentDTO;
 import com.example.schoolmanagementsystem.grade.GradeDTO;
 import com.example.schoolmanagementsystem.homework.HomeworkDTO;
+import com.example.schoolmanagementsystem.user.UserDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -109,5 +110,14 @@ public class CourseController {
             @RequestParam(defaultValue = "50") int size
     ) {
         return courseService.getCourseComments(courseId, page, size);
+    }
+
+    @GetMapping("{courseId}/students")
+    public List<UserDTO> getCourseStudents(
+            @PathVariable("courseId") Long courseId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size
+    ) {
+        return courseService.getCourseStudents(courseId, page, size);
     }
 }

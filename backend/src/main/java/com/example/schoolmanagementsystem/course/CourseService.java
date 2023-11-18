@@ -14,9 +14,7 @@ import com.example.schoolmanagementsystem.grade.GradeService;
 import com.example.schoolmanagementsystem.homework.HomeworkDTO;
 import com.example.schoolmanagementsystem.homework.HomeworkRepository;
 import com.example.schoolmanagementsystem.homework.HomeworkService;
-import com.example.schoolmanagementsystem.user.Role;
-import com.example.schoolmanagementsystem.user.User;
-import com.example.schoolmanagementsystem.user.UserRepository;
+import com.example.schoolmanagementsystem.user.*;
 import com.example.schoolmanagementsystem.util.UpdateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,6 +32,7 @@ public class CourseService {
     private final GradeService gradeService;
     private final AttendanceService attendanceService;
     private final CommentService commentService;
+    private final UserService userService;
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
     private final CourseDTOMapper courseDTOMapper;
@@ -225,6 +224,22 @@ public class CourseService {
         userRepository.save(student);
     }
 
+    public CourseDTO getCourseById(Long courseId) {
+        if (authenticationUtil.isUserStudent()) {
+            throw new NotEnoughAuthorityException("You don't have the right use this service");
+        }
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Course with id [%s] does not exist".formatted(courseId)));
+
+        if (!(course.getTeacher().equals(authenticationUtil.getRequestUser()) || authenticationUtil.isUserAdmin())) {
+            throw new NotEnoughAuthorityException("You don't have the right to access this information");
+        }
+
+        return courseDTOMapper.apply(course);
+    }
+
     private void validateCourseByIdAndOwner(Long courseId) {
         if (authenticationUtil.isUserStudent()) {
             throw new NotEnoughAuthorityException("You don't have the right use this service");
@@ -271,19 +286,11 @@ public class CourseService {
         return commentService.getByCourseId(courseId, pageable);
     }
 
-    public CourseDTO getCourseById(Long courseId) {
-        if (authenticationUtil.isUserStudent()) {
-            throw new NotEnoughAuthorityException("You don't have the right use this service");
-        }
+    public List<UserDTO> getCourseStudents(Long courseId, int pageCount, int pageSize) {
+        validateCourseByIdAndOwner(courseId);
 
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Course with id [%s] does not exist".formatted(courseId)));
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
 
-        if (!(course.getTeacher().equals(authenticationUtil.getRequestUser()) || authenticationUtil.isUserAdmin())) {
-            throw new NotEnoughAuthorityException("You don't have the right to access this information");
-        }
-
-        return courseDTOMapper.apply(course);
+        return userService.getByCourseId(courseId, pageable);
     }
 }
