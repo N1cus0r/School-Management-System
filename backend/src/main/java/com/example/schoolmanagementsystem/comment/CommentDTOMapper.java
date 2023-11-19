@@ -12,7 +12,8 @@ public class CommentDTOMapper implements Function<Comment, CommentDTO> {
                 comment.getText(),
                 comment.getDatePublished(),
                 comment.getCourse().getName(),
-                comment.getCourse().getTeacher().getFullName()
+                comment.getCourse().getTeacher().getFullName(),
+                comment.getStudent().getFullName()
         );
     }
 }

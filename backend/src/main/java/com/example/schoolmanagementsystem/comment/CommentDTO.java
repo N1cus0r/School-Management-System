@@ -7,5 +7,6 @@ public record CommentDTO(
         String text,
         LocalDate datePublished,
         String courseName,
-        String courseTeacher
+        String courseTeacher,
+        String studentName
 ) {}

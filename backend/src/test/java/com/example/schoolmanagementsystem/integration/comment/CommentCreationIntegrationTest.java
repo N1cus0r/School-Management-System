@@ -5,6 +5,7 @@ import com.example.schoolmanagementsystem.comment.CommentDTO;
 import com.example.schoolmanagementsystem.comment.CreateCommentRequest;
 import com.example.schoolmanagementsystem.course.CourseDTO;
 import com.example.schoolmanagementsystem.course.CreateCourseRequest;
+import com.example.schoolmanagementsystem.user.UserDTO;
 import com.example.schoolmanagementsystem.user.UserRegistrationRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -55,11 +56,11 @@ public class CommentCreationIntegrationTest extends AbstractCommentIntegrationTe
 
         CourseDTO courseDTO = getCourseByName(jwtToken, createCourseRequest.name());
 
-        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
+        UserDTO student = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
 
-        addStudentToCourseAndExpectOkStatus(jwtToken, courseDTO.id(), studentId);
+        addStudentToCourseAndExpectOkStatus(jwtToken, courseDTO.id(), student.id());
 
-        CreateCommentRequest createCommentRequest = getCreateCommentRequest(studentId, courseDTO.id());
+        CreateCommentRequest createCommentRequest = getCreateCommentRequest(student.id(), courseDTO.id());
 
         createCommentForStudentAndExpectOkStatus(jwtToken, createCommentRequest);
 
@@ -82,7 +83,8 @@ public class CommentCreationIntegrationTest extends AbstractCommentIntegrationTe
                 createCommentRequest.text(),
                 commentDatePublished,
                 courseDTO.name(),
-                courseDTO.teacherName()
+                courseDTO.teacherName(),
+                student.fullName()
         );
 
         assertThat(resultComments).contains(expectedComment);
@@ -110,9 +112,9 @@ public class CommentCreationIntegrationTest extends AbstractCommentIntegrationTe
 
         CourseDTO courseDTO = getCourseByName(jwtToken, createCourseRequest.name());
 
-        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
+        UserDTO student = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
 
-        addStudentToCourseAndExpectOkStatus(jwtToken, courseDTO.id(), studentId);
+        addStudentToCourseAndExpectOkStatus(jwtToken, courseDTO.id(), student.id());
 
         AuthenticationRequest teacherAuthenticationRequest =
                 new AuthenticationRequest(
@@ -122,7 +124,7 @@ public class CommentCreationIntegrationTest extends AbstractCommentIntegrationTe
 
         String teacherJwtToken = getUserJwtToken(teacherAuthenticationRequest);
 
-        CreateCommentRequest createCommentRequest = getCreateCommentRequest(studentId, courseDTO.id());
+        CreateCommentRequest createCommentRequest = getCreateCommentRequest(student.id(), courseDTO.id());
 
         createCommentForStudentAndExpectOkStatus(teacherJwtToken, createCommentRequest);
 
@@ -145,7 +147,8 @@ public class CommentCreationIntegrationTest extends AbstractCommentIntegrationTe
                 createCommentRequest.text(),
                 commentDatePublished,
                 courseDTO.name(),
-                courseDTO.teacherName()
+                courseDTO.teacherName(),
+                student.fullName()
         );
 
         assertThat(resultComments).contains(expectedComment);
