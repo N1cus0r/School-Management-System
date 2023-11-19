@@ -5,6 +5,7 @@ import com.example.schoolmanagementsystem.attendance.CreateAttendanceRequest;
 import com.example.schoolmanagementsystem.auth.AuthenticationRequest;
 import com.example.schoolmanagementsystem.course.CourseDTO;
 import com.example.schoolmanagementsystem.course.CreateCourseRequest;
+import com.example.schoolmanagementsystem.user.UserDTO;
 import com.example.schoolmanagementsystem.user.UserRegistrationRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -55,11 +56,11 @@ public class AttendanceCreationIntegrationTest extends AbstractAttendanceIntegra
 
         CourseDTO courseDTO = getCourseByName(jwtToken, createCourseRequest.name());
 
-        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
+        UserDTO student = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
 
-        addStudentToCourseAndExpectOkStatus(jwtToken, courseDTO.id(), studentId);
+        addStudentToCourseAndExpectOkStatus(jwtToken, courseDTO.id(), student.id());
 
-        CreateAttendanceRequest createAttendanceRequest = getCreateAttendanceRequest(studentId, courseDTO.id());
+        CreateAttendanceRequest createAttendanceRequest = getCreateAttendanceRequest(student.id(), courseDTO.id());
 
         createAttendanceForStudentAndExpectOkStatus(jwtToken, createAttendanceRequest);
 
@@ -83,7 +84,8 @@ public class AttendanceCreationIntegrationTest extends AbstractAttendanceIntegra
                 createAttendanceRequest.period(),
                 attendanceDatePublished,
                 courseDTO.name(),
-                courseDTO.teacherName()
+                courseDTO.teacherName(),
+                student.fullName()
         );
 
         assertThat(resultAttendances).contains(expectedAttendance);
@@ -111,9 +113,9 @@ public class AttendanceCreationIntegrationTest extends AbstractAttendanceIntegra
 
         CourseDTO courseDTO = getCourseByName(jwtToken, createCourseRequest.name());
 
-        Long studentId = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email()).id();
+        UserDTO student = getUserByEmailAndExpectOkStatus(jwtToken, studentRegistrationRequest.email());
 
-        addStudentToCourseAndExpectOkStatus(jwtToken, courseDTO.id(), studentId);
+        addStudentToCourseAndExpectOkStatus(jwtToken, courseDTO.id(), student.id());
 
         AuthenticationRequest teacherAuthenticationRequest =
                 new AuthenticationRequest(
@@ -123,7 +125,7 @@ public class AttendanceCreationIntegrationTest extends AbstractAttendanceIntegra
 
         String teacherJwtToken = getUserJwtToken(teacherAuthenticationRequest);
 
-        CreateAttendanceRequest createAttendanceRequest = getCreateAttendanceRequest(studentId, courseDTO.id());
+        CreateAttendanceRequest createAttendanceRequest = getCreateAttendanceRequest(student.id(), courseDTO.id());
 
         createAttendanceForStudentAndExpectOkStatus(teacherJwtToken, createAttendanceRequest);
 
@@ -147,7 +149,8 @@ public class AttendanceCreationIntegrationTest extends AbstractAttendanceIntegra
                 createAttendanceRequest.period(),
                 attendanceDatePublished,
                 courseDTO.name(),
-                courseDTO.teacherName()
+                courseDTO.teacherName(),
+                student.fullName()
         );
 
         assertThat(resultAttendances).contains(expectedAttendance);

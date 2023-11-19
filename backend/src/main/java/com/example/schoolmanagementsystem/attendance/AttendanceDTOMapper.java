@@ -13,7 +13,8 @@ public class AttendanceDTOMapper implements Function<Attendance, AttendanceDTO> 
                 attendance.getPeriod(),
                 attendance.getDatePublished(),
                 attendance.getCourse().getName(),
-                attendance.getCourse().getTeacher().getFullName()
+                attendance.getCourse().getTeacher().getFullName(),
+                attendance.getStudent().getFullName()
         );
     }
 }

@@ -8,5 +8,6 @@ public record AttendanceDTO (
     AttendancePeriod period,
     LocalDate datePublished,
     String courseName,
-    String courseTeacher
+    String courseTeacher,
+    String studentName
 ) {}
