@@ -26,8 +26,6 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 class UserRepositoryTest extends AbstractCourseDependentEntityRepositoryTest {
     @Autowired
     private UserRepository repository;
-    @Autowired
-    private CourseRepository courseRepository;
     private final Faker FAKER = new Faker();
 
     @Test
