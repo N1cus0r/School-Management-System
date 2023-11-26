@@ -1275,4 +1275,29 @@ class CourseServiceTest extends AbstractCourseRelatedServiceTest {
 
         verify(userService).getByCourseId(course.getId(), pageable);
     }
+
+    @Test
+    void getCourseNonParticipatingStudents() {
+        User teacher = createUserByRole(Role.TEACHER);
+
+        Course course = createCourseForTeacher(teacher);
+
+        when(authenticationUtil.isUserStudent())
+                .thenReturn(false);
+
+        when(courseRepository.findById(course.getId()))
+                .thenReturn(Optional.of(course));
+
+        when(authenticationUtil.isUserAdmin())
+                .thenReturn(true);
+
+        int pageCount = FAKER.number().randomDigitNotZero();
+        int pageSize = FAKER.number().randomDigitNotZero();
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        courseService.getCourseNonParticipatingStudents(course.getId(), pageCount, pageSize);
+
+        verify(userService).getByCourseIdNot(course.getId(), pageable);
+    }
 }

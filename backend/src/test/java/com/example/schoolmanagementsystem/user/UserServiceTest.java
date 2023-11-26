@@ -721,4 +721,30 @@ class UserServiceTest extends AbstractCourseRelatedServiceTest {
         assertThat(resultStudents)
                 .containsExactlyElementsOf(students.stream().map(userDTOMapper).collect(Collectors.toList()));
     }
+
+    @Test
+    void getByCourseIdNot() {
+        int pageCount = FAKER.number().numberBetween(1, 10);
+        int pageSize = FAKER.number().numberBetween(1, 10);
+
+        User teacher = createUserByRole(Role.TEACHER);
+
+        Course course = createCourseForTeacher(teacher);
+
+        List<User> students = List.of(
+                createUserByRole(Role.STUDENT),
+                createUserByRole(Role.STUDENT)
+        );
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        when(userRepository.findByCoursesIdNot(course.getId(), pageable))
+                .thenReturn(new PageImpl<>(students, pageable, students.size()));
+
+        List<UserDTO> resultStudents =
+                userService.getByCourseIdNot(course.getId(), pageable);
+
+        assertThat(resultStudents)
+                .containsExactlyElementsOf(students.stream().map(userDTOMapper).collect(Collectors.toList()));
+    }
 }

@@ -167,7 +167,7 @@ class UserRepositoryTest extends AbstractCourseDependentEntityRepositoryTest {
 
     @Test
     void findByCoursesId() {
-        int numberOfStudentsSatisfyingCondition = 5;
+        int numberOfStudentsSatisfyingCondition = 4;
         int numberOfStudentsNotSatisfyingCondition = 5;
 
         Set<User> studentsTakingCourse = new HashSet<>();
@@ -192,6 +192,40 @@ class UserRepositoryTest extends AbstractCourseDependentEntityRepositoryTest {
 
         Page<User> resultUserPage =
                 repository.findByCoursesId(
+                        course.getId(), page
+                );
+
+        assertThat(resultUserPage.getContent().size())
+                .isEqualTo(numberOfStudentsSatisfyingCondition);
+    }
+
+    @Test
+    void findByCoursesIdNot() {
+        int numberOfStudentsSatisfyingCondition = 4;
+        int numberOfStudentsNotSatisfyingCondition = 5;
+
+        Set<User> studentsTakingCourse = new HashSet<>();
+
+        for (int i = 0; i < numberOfStudentsSatisfyingCondition; i++) {
+            createUserByRole(Role.STUDENT);
+        }
+
+
+        for (int i = 0; i < numberOfStudentsNotSatisfyingCondition; i++) {
+            studentsTakingCourse.add(createUserByRole(Role.STUDENT));
+        }
+
+        Course course = createCourseForTeacherWithStudents(
+                createUserByRole(Role.TEACHER),
+                studentsTakingCourse
+        );
+
+        Pageable page = PageRequest.of(
+                0,
+                numberOfStudentsSatisfyingCondition + numberOfStudentsNotSatisfyingCondition);
+
+        Page<User> resultUserPage =
+                repository.findByCoursesIdNot(
                         course.getId(), page
                 );
 
