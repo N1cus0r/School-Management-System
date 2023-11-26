@@ -668,7 +668,7 @@ class UserServiceTest extends AbstractCourseRelatedServiceTest {
 
         assertThatThrownBy(() -> userService.getUserImage(userId))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("Customer with id [%s] profile image not found".formatted(userId));
+                .hasMessage("User with id [%s] profile image not found".formatted(userId));
     }
     @Test
     void getCustomerImageWithInsufficientAuthority() {
