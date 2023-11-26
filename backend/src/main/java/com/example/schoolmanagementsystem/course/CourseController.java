@@ -120,4 +120,14 @@ public class CourseController {
     ) {
         return courseService.getCourseStudents(courseId, page, size);
     }
+
+    @GetMapping("{courseId}/non-participating-students")
+    public List<UserDTO> getCourseNonParticipatingStudents(
+            @PathVariable("courseId") Long courseId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size
+    ) {
+        return courseService.getCourseNonParticipatingStudents(courseId, page, size);
+    }
+
 }

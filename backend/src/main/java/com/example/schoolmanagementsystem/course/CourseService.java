@@ -293,4 +293,12 @@ public class CourseService {
 
         return userService.getByCourseId(courseId, pageable);
     }
+
+    public List<UserDTO> getCourseNonParticipatingStudents(Long courseId, int pageCount, int pageSize)  {
+        validateCourseByIdAndOwner(courseId);
+
+        Pageable pageable = PageRequest.of(pageCount, pageSize);
+
+        return userService.getByCourseIdNot(courseId, pageable);
+    }
 }

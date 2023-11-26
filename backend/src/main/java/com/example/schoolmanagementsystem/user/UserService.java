@@ -1,7 +1,6 @@
 package com.example.schoolmanagementsystem.user;
 
 import com.example.schoolmanagementsystem.auth.AuthenticationUtil;
-import com.example.schoolmanagementsystem.comment.CommentDTO;
 import com.example.schoolmanagementsystem.exception.NotEnoughAuthorityException;
 import com.example.schoolmanagementsystem.exception.RequestValidationError;
 import com.example.schoolmanagementsystem.exception.ResourceNotFoundException;
@@ -237,7 +236,7 @@ public class UserService {
 
         if (user.getProfileImageId() == null) {
             throw new ResourceNotFoundException(
-                    "Customer with id [%s] profile image not found".formatted(userId)
+                    "User with id [%s] profile image not found".formatted(userId)
             );
         }
 
@@ -249,6 +248,15 @@ public class UserService {
 
     public List<UserDTO> getByCourseId(Long courseId, Pageable pageable) {
         return userRepository.findByCoursesId(courseId, pageable).getContent()
+                .stream()
+                .map(userDTOMapper)
+                .collect(Collectors.toList());
+    }
+
+    public List<UserDTO> getByCourseIdNot(Long courseId, Pageable pageable) {
+        Page<User> userPage = userRepository.findByCoursesIdNot(courseId, pageable);
+        System.out.println(userPage.getContent().size());
+        return userPage.getContent()
                 .stream()
                 .map(userDTOMapper)
                 .collect(Collectors.toList());
