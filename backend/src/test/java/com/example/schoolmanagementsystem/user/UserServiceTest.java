@@ -420,7 +420,7 @@ class UserServiceTest extends AbstractCourseRelatedServiceTest {
 
         assertThatThrownBy(() -> userService.updateUser(user.getId(), userUpdateRequest))
                 .isInstanceOf(NotEnoughAuthorityException.class)
-                .hasMessage("You don't have the right to update this user");
+                .hasMessage("You don't have the right to perform this operation");
     }
 
     @Test

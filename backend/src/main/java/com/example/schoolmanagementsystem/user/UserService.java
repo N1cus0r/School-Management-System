@@ -142,7 +142,7 @@ public class UserService {
         User user = getUserByIdAndThrowIfNotFound(userId);
 
         if (!authenticationUtil.isUserPermittedToUpdateUser(user)) {
-            throw new NotEnoughAuthorityException("You don't have the right to update this user");
+            throw new NotEnoughAuthorityException("You don't have the right to perform this operation");
         }
 
         boolean changes = false;
