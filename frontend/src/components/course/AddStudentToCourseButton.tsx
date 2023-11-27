@@ -19,7 +19,7 @@ const AddStudentToCourseButton = ({ course }: Props) => {
 
   return (
     <>
-      <Button colorScheme={"purple"} onClick={onOpen}>
+      <Button bg={"purple.200"} color={"black"} onClick={onOpen}>
         Add Student
       </Button>
       <CustomDrawer isOpen={isOpen} onClose={onClose} heading={"Add Student"}>

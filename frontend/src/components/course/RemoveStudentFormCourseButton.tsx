@@ -22,7 +22,7 @@ const RemoveStudentFormCourseButton = ({ course }: Props) => {
 
   return (
     <>
-      <Button colorScheme={"pink"} onClick={onOpen}>
+      <Button bg={"red.200"} color={"black"} onClick={onOpen}>
         Remove Student
       </Button>
       <CustomDrawer
