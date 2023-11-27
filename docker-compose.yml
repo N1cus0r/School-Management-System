@@ -1,0 +1,49 @@
+services:
+  db:
+    container_name: db
+    image: postgres
+    environment:
+      POSTGRES_USER: nicusor
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - db:/data/postgres
+    ports:
+      - 5432:5432
+    networks:
+      - db
+    restart: unless-stopped
+
+  api:
+    container_name: api
+    image: nicus0r/school-management-sys-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/postgres
+      SPRING_PROFILES_ACTIVE: preview
+    ports:
+      - 8080:8080
+    networks:
+      - db
+    restart: unless-stopped
+    depends_on:
+      - db
+
+  client:
+    container_name: client
+    image: nicus0r/school-management-sys-client
+    build:
+      context: frontend
+      args:
+        api_base_url: http://localhost:8080
+    ports:
+      - 3000:5173
+    depends_on:
+      - api
+    restart: unless-stopped
+
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db:

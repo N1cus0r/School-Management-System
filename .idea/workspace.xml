@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8d266617-d727-4973-87a8-93e9556a63dc" name="Changes" comment="Updated the error message in the updateUser method from the UserService class">
+      <change beforePath="$PROJECT_DIR$/Dockerrun.aws.json" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerrun.aws.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/example/schoolmanagementsystem/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/example/schoolmanagementsystem/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/example/schoolmanagementsystem/user/UserRegistrationRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/example/schoolmanagementsystem/user/UserRegistrationRequest.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="AnnotationType" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;N1cus0r&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="0ba13b45-c4c7-4ce8-8668-03fbff537dd5" />
+        <option name="url" value="git@github.com:N1cus0r/School-Management-System.git" />
+      </UrlAndAccount>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2VWqD6a9015xvHZZit6iNg2ZtGF" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="openDirectoriesWithSingleClick" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;corretto-17&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/code/Java/projects/SchoolManagementSystem/backend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/snap/intellij-idea-ultimate/462/plugins/javascript-impl/jsLanguageServicesImpl/external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
+    ],
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;GitIgnore&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/.github/workflows" />
+      <recent name="$PROJECT_DIR$/.github/workflow" />
+      <recent name="$PROJECT_DIR$/backend" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Main" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="ACTIVE_PROFILES" value="preview" />
+      <module name="SchoolManagementSystem" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.schoolmanagementsystem.Main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8d266617-d727-4973-87a8-93e9556a63dc" name="Changes" comment="" />
+      <created>1694962061622</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1694962061622</updated>
+      <workItem from="1694962062642" duration="71000" />
+      <workItem from="1695727061722" duration="299000" />
+      <workItem from="1695727370677" duration="426000" />
+      <workItem from="1695727809503" duration="101000" />
+      <workItem from="1695727921606" duration="335000" />
+      <workItem from="1695728266844" duration="29000" />
+      <workItem from="1695728307419" duration="66000" />
+      <workItem from="1695728382709" duration="15000" />
+      <workItem from="1695728407885" duration="165000" />
+      <workItem from="1695728583592" duration="10000" />
+      <workItem from="1695728604192" duration="235000" />
+      <workItem from="1695728850844" duration="84000" />
+      <workItem from="1696946833230" duration="403000" />
+      <workItem from="1697017057771" duration="421000" />
+      <workItem from="1697018192098" duration="392000" />
+      <workItem from="1697018591268" duration="454000" />
+      <workItem from="1697019050835" duration="880000" />
+      <workItem from="1697019942048" duration="5857000" />
+      <workItem from="1697030567672" duration="2093000" />
+      <workItem from="1697288228748" duration="302000" />
+      <workItem from="1697288541972" duration="705000" />
+      <workItem from="1697289258519" duration="12738000" />
+      <workItem from="1697377814622" duration="5166000" />
+      <workItem from="1697465954122" duration="40000" />
+      <workItem from="1698669748997" duration="1660000" />
+      <workItem from="1698690722014" duration="618000" />
+      <workItem from="1698764317910" duration="4665000" />
+      <workItem from="1698834679458" duration="3900000" />
+      <workItem from="1698915314030" duration="3969000" />
+      <workItem from="1698937619215" duration="2834000" />
+      <workItem from="1699009507223" duration="1419000" />
+      <workItem from="1699026284400" duration="4639000" />
+      <workItem from="1699104146323" duration="928000" />
+      <workItem from="1699188048116" duration="3740000" />
+      <workItem from="1699369609709" duration="1911000" />
+      <workItem from="1699535425653" duration="4243000" />
+      <workItem from="1699707438850" duration="2805000" />
+      <workItem from="1699726631135" duration="2622000" />
+      <workItem from="1699782873134" duration="3377000" />
+      <workItem from="1699954476578" duration="6506000" />
+      <workItem from="1700039262575" duration="8481000" />
+      <workItem from="1700151110795" duration="4713000" />
+      <workItem from="1700298611637" duration="3329000" />
+      <workItem from="1700336406347" duration="1931000" />
+      <workItem from="1700386519180" duration="6357000" />
+      <workItem from="1700571686415" duration="5107000" />
+      <workItem from="1700753144547" duration="4729000" />
+      <workItem from="1700842654545" duration="629000" />
+      <workItem from="1700903260502" duration="6517000" />
+      <workItem from="1700915415365" duration="964000" />
+      <workItem from="1700992893618" duration="4819000" />
+      <workItem from="1701029058507" duration="4117000" />
+      <workItem from="1701076620516" duration="3361000" />
+    </task>
+    <task id="LOCAL-00001" summary="Added prod profile and updated Dockerrun.aws.json">
+      <option name="closed" value="true" />
+      <created>1697289580096</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1697289580096</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Updated db host in dev profile">
+      <option name="closed" value="true" />
+      <created>1697295532591</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1697295532591</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Removed error in application.yml files">
+      <option name="closed" value="true" />
+      <created>1697295861009</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1697295861009</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Refactored evaluation of permissions in AuthenticationUtil class">
+      <option name="closed" value="true" />
+      <created>1697304638947</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1697304638947</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Refactored permission error messages and unit tested for it">
+      <option name="closed" value="true" />
+      <created>1697304755658</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1697304755658</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Changed update user permissions for teacher">
+      <option name="closed" value="true" />
+      <created>1697305096273</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1697305096273</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Changed the accept media type value to IMAGE_JPEG_VALUE in UserProfileImageIntegrationTest class">
+      <option name="closed" value="true" />
+      <created>1697305680920</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1697305680920</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Modified AuthenticationIntegrationTest class so that it uses the dev profile and extends AbstractIntegrationTest class">
+      <option name="closed" value="true" />
+      <created>1697305733818</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1697305733818</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Updated backend-cd.yml file to run the &quot;dev&quot; profile">
+      <option name="closed" value="true" />
+      <created>1697306787772</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1697306787772</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Updated pom.xml file to run the &quot;dev&quot; profile when failsafe runs integration tests">
+      <option name="closed" value="true" />
+      <created>1697307238756</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1697307238756</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Updated integration tests so that they use application-dev.yml, removed properties file from test/resources folder">
+      <option name="closed" value="true" />
+      <created>1697309580389</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1697309580389</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Updated UserServiceTest and removed application.properties file from test resources folder">
+      <option name="closed" value="true" />
+      <created>1697378037326</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1697378037326</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Updated pom.xml so that integration tests run on &quot;dev&quot; profile">
+      <option name="closed" value="true" />
+      <created>1697380206696</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1697380206696</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Removed mvn verify arg">
+      <option name="closed" value="true" />
+      <created>1697380535975</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1697380535975</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Added new RDS url to datasource.url property">
+      <option name="closed" value="true" />
+      <created>1697381318725</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1697381318725</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Added CORS configuration in dev profile">
+      <option name="closed" value="true" />
+      <created>1698764396843</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1698764396843</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Removed functionality to retrieve users by id and added the functionality to retrieve users by email for teachers and students">
+      <option name="closed" value="true" />
+      <created>1698837167403</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1698837167403</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Made mobilePhone field in UserRegistrationRequest class nullable and not blank">
+      <option name="closed" value="true" />
+      <created>1700042066196</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1700042066196</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Added CourseNameTakenException class and added the functionality to retrieve homeworks, grades, attendances and comments by course id">
+      <option name="closed" value="true" />
+      <created>1700042185570</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1700042185570</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Removed unused imports">
+      <option name="closed" value="true" />
+      <created>1700042208535</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1700042208535</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Added columnDefinition property to &quot;text&quot; for Comment model and Homework model text field">
+      <option name="closed" value="true" />
+      <created>1700042254415</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1700042254415</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Added new dependency">
+      <option name="closed" value="true" />
+      <created>1700042279141</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1700042279141</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Added tests for updating courses with a name that is already user">
+      <option name="closed" value="true" />
+      <created>1700042406439</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1700042406439</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Added unit tests for retrieving homeworks, grades, attendances and comments by course id">
+      <option name="closed" value="true" />
+      <created>1700045267486</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1700045267486</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Added unit tests for retrieving homeworks, grades, attendances and comments by course id">
+      <option name="closed" value="true" />
+      <created>1700045281673</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1700045281673</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Added unit tests for retrieving homeworks, grades, attendances and comments by course id in the CourseService class">
+      <option name="closed" value="true" />
+      <created>1700152378525</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1700152378525</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Removed unused imports">
+      <option name="closed" value="true" />
+      <created>1700152393825</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1700152393825</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Added functionality to retrieve course by id">
+      <option name="closed" value="true" />
+      <created>1700152420982</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1700152420982</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Added tests for retrieving course by id functionality">
+      <option name="closed" value="true" />
+      <created>1700152832076</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1700152832076</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Added functionality to retrieve users by course id">
+      <option name="closed" value="true" />
+      <created>1700299505590</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1700299505590</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Added new field &quot;studentName&quot; to GradeDTO">
+      <option name="closed" value="true" />
+      <created>1700300563920</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1700300563920</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Added unit tests for retrieving students by course id functionality">
+      <option name="closed" value="true" />
+      <created>1700301278030</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1700301278030</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Added &quot;studentName&quot; field on AttendanceDTO record">
+      <option name="closed" value="true" />
+      <created>1700386968577</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1700386968577</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Added &quot;studentName&quot; field on CommentDTO record">
+      <option name="closed" value="true" />
+      <created>1700387305885</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1700387305885</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Added functionality to retrieve students that don't participate in a specific course by course id">
+      <option name="closed" value="true" />
+      <created>1700993719664</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1700993719664</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Added unit tests for retrieving students that don't participate in a specific course by course id functionality">
+      <option name="closed" value="true" />
+      <created>1700994017633</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1700994017633</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Removed unused dependency in UserRepositoryTest class">
+      <option name="closed" value="true" />
+      <created>1701030241835</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1701030241835</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Added new &quot;preview&quot; profile and data generation functionality for it">
+      <option name="closed" value="true" />
+      <created>1701030307384</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1701030307384</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Removed mistake in error message of getUnexistingCustomerImage method in UserServiceTest class">
+      <option name="closed" value="true" />
+      <created>1701031264371</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1701031264371</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Added cascade constrains on courses attendances, grades, comments and homeworks">
+      <option name="closed" value="true" />
+      <created>1701077224581</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1701077224581</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Updated the error message in the updateUser method from the UserService class">
+      <option name="closed" value="true" />
+      <created>1701077786580</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1701077786580</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added new RDS url to datasource.url property" />
+    <MESSAGE value="Added CORS configuration in dev profile" />
+    <MESSAGE value="Removed functionality to retrieve users by id and added the functionality to retrieve users by email for teachers and students" />
+    <MESSAGE value="Made mobilePhone field in UserRegistrationRequest class nullable and not blank" />
+    <MESSAGE value="Added CourseNameTakenException class and added the functionality to retrieve homeworks, grades, attendances and comments by course id" />
+    <MESSAGE value="Added columnDefinition property to &quot;text&quot; for Comment model and Homework model text field" />
+    <MESSAGE value="Added new dependency" />
+    <MESSAGE value="Added tests for updating courses with a name that is already user" />
+    <MESSAGE value="Added unit tests for retrieving homeworks, grades, attendances and comments by course id" />
+    <MESSAGE value="Added unit tests for retrieving homeworks, grades, attendances and comments by course id in the CourseService class" />
+    <MESSAGE value="Removed unused imports" />
+    <MESSAGE value="Added functionality to retrieve course by id" />
+    <MESSAGE value="Added tests for retrieving course by id functionality" />
+    <MESSAGE value="Added functionality to retrieve users by course id" />
+    <MESSAGE value="Added new field &quot;studentName&quot; to GradeDTO" />
+    <MESSAGE value="Added unit tests for retrieving students by course id functionality" />
+    <MESSAGE value="Added &quot;studentName&quot; field on AttendanceDTO record" />
+    <MESSAGE value="Added &quot;studentName&quot; field on CommentDTO record" />
+    <MESSAGE value="Added functionality to retrieve students that don't participate in a specific course by course id" />
+    <MESSAGE value="Added unit tests for retrieving students that don't participate in a specific course by course id functionality" />
+    <MESSAGE value="Removed unused dependency in UserRepositoryTest class" />
+    <MESSAGE value="Added new &quot;preview&quot; profile and data generation functionality for it" />
+    <MESSAGE value="Removed mistake in error message of getUnexistingCustomerImage method in UserServiceTest class" />
+    <MESSAGE value="Added cascade constrains on courses attendances, grades, comments and homeworks" />
+    <MESSAGE value="Updated the error message in the updateUser method from the UserService class" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated the error message in the updateUser method from the UserService class" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
