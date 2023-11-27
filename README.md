@@ -9,6 +9,8 @@ The School Management System is a comprehensive web application designed to stre
   - **Teachers:** Create and manage courses, homeworks, grades, comments and attendances, assign and remove students.
   - **Students:** Access course information, submit view homeworks, grades, comments and attendances
 
+![Design fără titlu(2)](https://github.com/N1cus0r/School-Management-System/assets/110561950/f0a6cb3f-3779-4e53-a0b9-36aabf5c2f75)
+
 - **Data Management:**
   - CRUD opperations for all the entities
   - Assign or remove students from courses.
