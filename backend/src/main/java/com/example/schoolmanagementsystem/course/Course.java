@@ -1,5 +1,9 @@
 package com.example.schoolmanagementsystem.course;
 
+import com.example.schoolmanagementsystem.attendance.Attendance;
+import com.example.schoolmanagementsystem.comment.Comment;
+import com.example.schoolmanagementsystem.grade.Grade;
+import com.example.schoolmanagementsystem.homework.Homework;
 import com.example.schoolmanagementsystem.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,9 +38,26 @@ public class Course {
     private String name;
     @ManyToOne
     private User teacher;
-    @ManyToMany(mappedBy = "courses")
-    private Set<User> students;
 
+    @ManyToMany
+    @JoinTable(
+            name = "student_course",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    private Set<User> students = new HashSet<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private Set<Attendance> attendances = new HashSet<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private Set<Grade> grades = new HashSet<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private Set<Comment> comments = new HashSet<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private Set<Homework> homeworks = new HashSet<>();
     @PrePersist
     public void prePersist() {
         this.students = new HashSet<>();
